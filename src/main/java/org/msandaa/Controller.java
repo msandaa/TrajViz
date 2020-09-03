@@ -35,7 +35,9 @@ public class Controller extends AnchorPane {
 	private double previousY;
 
 	@FXML
-	private SubScene subscene;
+	public AnchorPane anchorpane;
+	@FXML
+	public SubScene subscene;
 	@FXML
 	private PerspectiveCamera cam;
 
@@ -71,6 +73,8 @@ public class Controller extends AnchorPane {
 
 	@FXML
 	void mouseClicked(MouseEvent event) {
+		System.out.println(anchorpane.getHeight() + "  anchor  " + anchorpane.getWidth());
+		System.out.println(subscene.getHeight() + "  subscene  " + subscene.getWidth());
 		if (event.getButton() == MouseButton.PRIMARY) {
 			PickResult pickResult = event.getPickResult();
 			Node node = pickResult.getIntersectedNode();
@@ -127,6 +131,10 @@ public class Controller extends AnchorPane {
 		view.setDefaultPosition(subscene.getWidth() / 2, subscene.getHeight() / 2, 0);
 		subscene.setRoot(view);
 		subscene.setCamera(cam);
+		System.out.println(anchorpane.getHeight() + "  anchor  " + anchorpane.getWidth());
+		System.out.println(subscene.getHeight() + "  subscene  " + subscene.getWidth());
+		// subscene.heightProperty().bind(anchorpane.heightProperty());
+		// subscene.widthProperty().bind(anchorpane.widthProperty());
 	}
 
 	private ArrayList<Trajectory> trajektoriesBetweenSelectedPositions() {

@@ -69,27 +69,36 @@ public class Deserializer {
 		}
 	}
 
-	public static Roadmap fileToRoadmap(final File file)
+	public static Roadmap fileToRoadmap(File file)
 			throws FileInputException, FileMappingException, FileTransformException {
 		String fExtension = getFileExtension(file);
-		switch (fExtension) {
-		case "json":
+		if (fExtension.equals("json")) {
 			return jsonToRoadmap(fileToString(file));
-		default:
+		} else {
 			throw new FileInputException.FiletypeNotProvided(file.getName(), fExtension);
 		}
 	}
 
-	public static Roadmap jsonToRoadmap(final String json) throws FileMappingException {
+	public static Roadmap jsonToRoadmap(String json) throws FileMappingException {
 		return deserializeRoadmap(json);
 	}
 
-	public static Trajectories jsonToTrajectorys(Roadmap roadmap, String json)
+	public static Trajectories fileToTrajectories(Roadmap roadmap, File file) throws FileInputException,
+			FileMappingException, FileTransformException, JsonMappingException, JsonProcessingException {
+		String fExtension = getFileExtension(file);
+		if (fExtension.equals("json")) {
+			return jsonToTrajectories(roadmap, fileToString(file));
+		} else {
+			throw new FileInputException.FiletypeNotProvided(file.getName(), fExtension);
+		}
+	}
+
+	public static Trajectories jsonToTrajectories(Roadmap roadmap, String json)
 			throws FileMappingException, JsonMappingException, JsonProcessingException {
 		return deserializeTrajectories(roadmap, json);
 	}
 
-	private static Roadmap deserializeRoadmap(final String json) throws FileMappingException {
+	private static Roadmap deserializeRoadmap(String json) throws FileMappingException {
 		try {
 			MAPPER.enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
 			MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -269,13 +278,13 @@ public class Deserializer {
 
 	}
 
-	public static String getFileExtension(final File file) {
+	private static String getFileExtension(final File file) {
 		String filename = file.getName();
 		int i = filename.lastIndexOf('.');
 		return (i >= 0 && filename.length() > i) ? filename.substring(i + 1) : "";
 	}
 
-	public static String readString(final File file) throws IOException {
+	private static String readString(final File file) throws IOException {
 		try (Stream<String> stream = Files.lines(file.toPath(), StandardCharsets.UTF_8)) {
 			return stream.collect(Collectors.joining("\n"));
 		}

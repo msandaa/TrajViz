@@ -8,8 +8,8 @@
   <menus>
     <Menu mnemonicParsing="false" text="File">
       <items>
-        <MenuItem mnemonicParsing="false" onAction="#openGraph" text="Read Graph" />
-            <MenuItem mnemonicParsing="false" onAction="#openTrajektory" text="Read Trajectorys" />
+        <MenuItem mnemonicParsing="false" onAction="#readGraph" text="Read Graph" />
+            <MenuItem mnemonicParsing="false" onAction="#readTrajectories" text="Read Trajectorys" />
       </items>
     </Menu>
       <Menu mnemonicParsing="false" text="Edit">
