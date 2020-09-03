@@ -1,0 +1,159 @@
+{	
+	"Traj1" :	[	
+					{
+					"station" : "P15" , 
+					"time" : "0"
+					},
+					{
+					"station" : "P14" , 
+					"time" : "1"
+					},
+					{
+					"station" : "P13" , 
+					"time" : "2"
+					},
+					{
+					"station" : "P1" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P2" , 
+					"time" : "4"
+					},
+					{
+					"station" : "P4" , 
+					"time" : "4"
+					},
+					{
+					"station" : "P5" , 
+					"time" : "4"
+					},
+					{
+					"station" : "P6" , 
+					"time" : "4"
+					}
+				],
+			
+	"Traj2" :	[	
+					{
+					"station" : "P15" ,
+					"time" : "2"
+					},
+					{
+					"station" : "P14" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P13" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P1" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P7" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P9" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P10" , 
+					"time" : "5"
+					}
+				],	
+		
+	"Traj3" :	[		
+					{
+					"station" : "P15" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P14" , 
+					"time" : "4"
+					},
+					{
+					"station" : "P13" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P1" , 
+					"time" : "4"
+					},
+					{
+					"station" : "P2" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P3" , 
+					"time" : "5"
+					}
+				],
+				
+	"Traj4" :	[	
+					{
+					"station" : "P3" ,
+					"time" : "2"
+					},
+					{
+					"station" : "P2" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P1" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P13" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P12" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P11" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P9" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P10" , 
+					"time" : "5"
+					}
+				],
+				
+	"Traj5" :	[	
+					{
+					"station" : "P15" ,
+					"time" : "2"
+					},
+					{
+					"station" : "P14" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P13" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P1" , 
+					"time" : "3"
+					},
+					{
+					"station" : "P7" , 
+					"time" : "5"
+					},
+					{
+					"station" : "P8" , 
+					"time" : "3"
+					}
+				]
+}
+
+
+
