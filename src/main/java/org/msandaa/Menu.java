@@ -3,6 +3,7 @@ package org.msandaa;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 
 import org.msandaa.model.Roadmap;
 import org.msandaa.model.Trajectories;
@@ -61,7 +62,7 @@ public class Menu extends MenuBar {
 
 	@FXML
 	void readTrajectories(ActionEvent event) throws JsonMappingException, FileInputException, FileMappingException,
-			FileTransformException, JsonProcessingException {
+			FileTransformException, JsonProcessingException, ParseException {
 		File file = CustomFileChooser.showOpenDialog(stage);
 		if (file == null) {
 			return;

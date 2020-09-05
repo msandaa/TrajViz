@@ -19,11 +19,9 @@ public class Trajectory {
 	private ArrayList<Move> calculateMoves() {
 		ArrayList<Move> moves = new ArrayList<>();
 		for (int i = 0; i < pointList.size() - 1; i++) {
-			Position startPosition = pointList.get(i).station;
-			Position endPosition = pointList.get(i + 1).station;
-			int startTime = Integer.parseInt(pointList.get(i).time);
-			int endTime = Integer.parseInt(pointList.get(i + 1).time);
-			moves.add(new Move(startPosition, endPosition, startTime, endTime));
+			DataPoint startPoint = pointList.get(i);
+			DataPoint endPoint = pointList.get(i + 1);
+			moves.add(new Move(startPoint.station, endPoint.station, startPoint.time, endPoint.time));
 		}
 		return moves;
 	}

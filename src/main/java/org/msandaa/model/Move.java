@@ -1,23 +1,26 @@
 package org.msandaa.model;
 
+import java.util.Date;
+
 public class Move {
 
 	public final Position startPosition;
 	public final Position endPosition;
-	public final int startTime;
-	public final int endTime;
+	public final Date startTime;
+	public final Date endTime;
 	public final double distance;
-	public final double timedifferenz;
+	public final long timedifferenz;
 	public final double speed;
 
-	public Move(Position startPosition, Position endPosition, int startTime, int endTime) {
+	public Move(Position startPosition, Position endPosition, Date startTime, Date endTime) {
 		this.startPosition = startPosition;
 		this.endPosition = endPosition;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		distance = Math
 				.sqrt(Math.pow(endPosition.x - startPosition.x, 2) + Math.pow(startPosition.y - endPosition.y, 2));
-		timedifferenz = endTime - startTime;
+		timedifferenz = endTime.getTime() - startTime.getTime();
+		System.out.println(timedifferenz);
 		speed = distance / timedifferenz;
 	}
 

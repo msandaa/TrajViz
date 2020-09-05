@@ -1,11 +1,13 @@
 package org.msandaa.model;
 
+import java.util.Date;
+
 public class DataPoint {
 
 	public final Position station;
-	public final String time;
+	public final Date time;
 
-	public DataPoint(Position station, String time) {
+	public DataPoint(Position station, Date time) {
 		this.station = station;
 		this.time = time;
 	}

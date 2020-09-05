@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -83,8 +85,9 @@ public class Deserializer {
 		return deserializeRoadmap(json);
 	}
 
-	public static Trajectories fileToTrajectories(Roadmap roadmap, File file) throws FileInputException,
-			FileMappingException, FileTransformException, JsonMappingException, JsonProcessingException {
+	public static Trajectories fileToTrajectories(Roadmap roadmap, File file)
+			throws FileInputException, FileMappingException, FileTransformException, JsonMappingException,
+			JsonProcessingException, ParseException {
 		String fExtension = getFileExtension(file);
 		if (fExtension.equals("json")) {
 			return jsonToTrajectories(roadmap, fileToString(file));
@@ -94,7 +97,7 @@ public class Deserializer {
 	}
 
 	public static Trajectories jsonToTrajectories(Roadmap roadmap, String json)
-			throws FileMappingException, JsonMappingException, JsonProcessingException {
+			throws FileMappingException, JsonMappingException, JsonProcessingException, ParseException {
 		return deserializeTrajectories(roadmap, json);
 	}
 
@@ -171,19 +174,20 @@ public class Deserializer {
 	}
 
 	private static Trajectories deserializeTrajectories(Roadmap roadmap, String json)
-			throws JsonMappingException, JsonProcessingException {
+			throws JsonMappingException, JsonProcessingException, ParseException {
+		SimpleDateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		Iterator<Map.Entry<String, JsonNode>> it = MAPPER.readTree(json).fields();
 		Map<String, Trajectory> trajectories = new HashMap<>();
 		while (it.hasNext()) {
 			Map.Entry<String, JsonNode> entry = it.next();
-			JsonNode node = entry.getValue();
-			ArrayList<DesPointTraj> deserializerPoints = MAPPER.readValue(node.toString(),
+			ArrayList<DesPointTraj> deserializedPoints = MAPPER.readValue(entry.getValue().toString(),
 					new TypeReference<ArrayList<DesPointTraj>>() {
 					});
 			ArrayList<DataPoint> trajectory = new ArrayList<>();
-			for (int i = 0; i < deserializerPoints.size(); i++) {
-				trajectory.add(new DataPoint(roadmap.positions.get(deserializerPoints.get(i).station),
-						deserializerPoints.get(i).time));
+			for (int i = 0; i < deserializedPoints.size(); i++) {
+				DesPointTraj desPointTraj = deserializedPoints.get(i);
+				trajectory.add(new DataPoint(roadmap.positions.get(desPointTraj.station),
+						dateformatter.parse(desPointTraj.time)));
 			}
 			trajectories.put(entry.getKey(), new Trajectory(entry.getKey(), trajectory));
 		}

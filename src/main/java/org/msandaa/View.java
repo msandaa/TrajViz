@@ -15,6 +15,7 @@ import org.msandaa.viewElements.RotatableGroup;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -57,7 +58,10 @@ public class View extends Group {
 		for (int j = 0; j < trajectory.moves.size(); j++) {
 			Move move = trajectory.moves.get(j);
 			Rectangle rectangle = new Rectangle(move.distance * 10, 20);
-			rectangle.setFill(Color.LIGHTGREY);
+			double timeDiff = move.timedifferenz / 1000;
+
+			rectangle.setFill(calculateColor(timeDiff));
+
 			double alpha = Math.toDegrees(Math.atan2((-move.endPosition.y + move.startPosition.y),
 					(move.endPosition.x - move.startPosition.x)));
 			Translate translate = new Translate(move.startPosition.x * 10, -move.startPosition.y * 10,
@@ -68,6 +72,19 @@ public class View extends Group {
 			rotateableRoot.getChildren().add(rectangle);
 		}
 		drawnTrajektories++;
+	}
+
+	private Paint calculateColor(double timeDiff) {
+		if (timeDiff < 5) {
+			return Color.LIGHTGREY;
+		} else if (timeDiff < 10) {
+			return Color.GREEN;
+		} else if (timeDiff < 15) {
+			return Color.YELLOW;
+		} else if (timeDiff < 20) {
+			return Color.RED;
+		}
+		return Color.BLACK;
 	}
 
 	public void moveX(double distance) {
