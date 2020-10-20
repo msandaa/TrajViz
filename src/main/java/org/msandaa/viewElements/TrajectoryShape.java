@@ -1,6 +1,5 @@
 package org.msandaa.viewElements;
 
-import org.msandaa.View;
 import org.msandaa.model.Move;
 import org.msandaa.model.Trajectory;
 
@@ -15,12 +14,12 @@ public class TrajectoryShape extends Group {
 
 	private String id;
 
-	public TrajectoryShape(String id, View view, Trajectory trajectory) {
+	public TrajectoryShape(String id, Trajectory trajectory) {
 		this.id = id;
-		build(view, trajectory);
+		build(trajectory);
 	}
 
-	private void build(View view, Trajectory trajectory) {
+	private void build(Trajectory trajectory) {
 		for (int j = 0; j < trajectory.moves.size(); j++) {
 			Move move = trajectory.moves.get(j);
 
@@ -31,8 +30,10 @@ public class TrajectoryShape extends Group {
 
 			double alpha = Math.toDegrees(Math.atan2((-move.endPosition.y + move.startPosition.y),
 					(move.endPosition.x - move.startPosition.x)));
-			Translate translate = new Translate(move.startPosition.x * 10, -move.startPosition.y * 10,
-					-20 * view.getDrawnTrajecotries());
+			// Translate translate = new Translate(move.startPosition.x * 10,
+			// -move.startPosition.y * 10,
+			// -20 * view.getDrawnTrajecotries());
+			Translate translate = new Translate(move.startPosition.x * 10, -move.startPosition.y * 10, 0);
 			Rotate rotateX = new Rotate(-90, Rotate.X_AXIS);
 			Rotate rotateZ = new Rotate(alpha, Rotate.Z_AXIS);
 			rectangle.getTransforms().addAll(translate, rotateZ, rotateX);

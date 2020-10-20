@@ -23,16 +23,6 @@ public class ToolbarController extends VBox {
 		}
 	}
 
-//	@FXML
-//	void colorGREENClicked(Event...) {
-//		controller.hideAttribute()
-//	}
-
-	@FXML
-	void showAll(ActionEvent event) {
-		controller.drawTrajectorys();
-	}
-
 	@FXML
 	void showAverageSpeed(ActionEvent event) {
 		controller.calculateAverageSpeed();

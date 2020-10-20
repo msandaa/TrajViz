@@ -72,11 +72,6 @@ public class Menu extends MenuBar {
 	}
 
 	@FXML
-	void drawAll(ActionEvent event) {
-		controller.drawTrajectorys();
-	}
-
-	@FXML
 	void drawSelected(ActionEvent event) {
 		controller.tryDrawTrajectory();
 	}

@@ -1,12 +1,10 @@
 package org.msandaa;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.msandaa.model.Path;
 import org.msandaa.model.Roadmap;
-import org.msandaa.model.Trajectories;
 import org.msandaa.model.Trajectory;
 import org.msandaa.viewElements.GraphShape;
 import org.msandaa.viewElements.MoveableGroup;
@@ -22,8 +20,8 @@ public class View extends Group {
 	private MoveableGroup moveableRoot = new MoveableGroup();
 	private RotatableGroup rotateableRoot = new RotatableGroup();
 
-	private Map<String, TrajectoryShape> trajectoryShapes = new HashMap<>();
 	private GraphShape graph;
+	private Map<String, TrajectoryShape> listOfTrajectoryShapes = new HashMap<>();
 	private int drawnTrajektories = 0;
 
 	public View(Roadmap roadmap) {
@@ -33,29 +31,19 @@ public class View extends Group {
 		this.getChildren().add(moveableRoot);
 	}
 
-	public void drawTrajectories(Trajectories trajectories) {
-		Iterator<Trajectory> it = trajectories.map.values().iterator();
-		for (int i = 0; it.hasNext(); i++) {
-			drawTrajectory(it.next());
-		}
-	}
-
 	public void drawTrajectory(Trajectory trajectory) {
-		TrajectoryShape trajectoryShape = new TrajectoryShape(trajectory.id, this, trajectory);
-		trajectoryShapes.put(trajectory.id, trajectoryShape);
+		TrajectoryShape trajectoryShape = new TrajectoryShape(trajectory.id, trajectory);
+		listOfTrajectoryShapes.put(trajectory.id, trajectoryShape);
+		trajectoryShape.getTransforms().addAll(new Translate(0, 0, -20 * drawnTrajektories));
 		rotateableRoot.getChildren().add(trajectoryShape);
 		updateDrawnTrajectorys();
 	}
 
-	private void updateDrawnTrajectorys() {
-		drawnTrajektories = trajectoryShapes.size();
-	}
-
-	public void colorPaths(Map<Path, Double> avSpeeds) {
+	public void colorizePaths(Map<Path, Double> avSpeeds) {
 		graph.color(avSpeeds);
 	}
 
-	public int getDrawnTrajecotries() {
+	public int getNumberOfDrawnTrajecotries() {
 		return drawnTrajektories;
 	}
 
@@ -85,12 +73,11 @@ public class View extends Group {
 	}
 
 	public void deleteAll() {
-		Iterator<TrajectoryShape> it = trajectoryShapes.values().iterator();
-		for (int i = 0; it.hasNext(); i++) {
-			TrajectoryShape trajectoryShape = it.next();
+		for (TrajectoryShape trajectoryShape : listOfTrajectoryShapes.values()) {
 			rotateableRoot.getChildren().remove(trajectoryShape);
 		}
-		trajectoryShapes.clear();
+		listOfTrajectoryShapes.clear();
+		updateDrawnTrajectorys();
 	}
 
 	public static Color speedToColor(Double speed) {
@@ -103,5 +90,9 @@ public class View extends Group {
 		} else {
 			return Color.LIGHTGRAY;
 		}
+	}
+
+	private void updateDrawnTrajectorys() {
+		drawnTrajektories = listOfTrajectoryShapes.size();
 	}
 }

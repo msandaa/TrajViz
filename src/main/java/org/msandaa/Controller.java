@@ -65,10 +65,6 @@ public class Controller extends AnchorPane {
 		trajectories = t;
 	}
 
-	public void drawTrajectorys() {
-		view.drawTrajectories(trajectories);
-	}
-
 	public void tryDrawTrajectory() {
 		if (selected.size() == 2) {
 			ArrayList<Trajectory> trajectorys = trajektoriesBetweenSelectedPositions();
@@ -81,7 +77,7 @@ public class Controller extends AnchorPane {
 
 	public void calculateAverageSpeed() {
 		Map<Path, Double> averageSpeedsOfPaths = calculateAverageSpeedOfPaths();
-		view.colorPaths(averageSpeedsOfPaths);
+		view.colorizePaths(averageSpeedsOfPaths);
 	}
 
 	@FXML
@@ -180,22 +176,16 @@ public class Controller extends AnchorPane {
 	private Map<Path, Double> calculateAverageSpeedOfPaths() {
 		Map<Path, Double> averageSpeedsOfPaths = new HashMap<>();
 		Map<String, Path> paths = roadmap.paths;
-		Iterator<Path> itPaths = paths.values().iterator();
-		while (itPaths.hasNext()) {
-			Path path = itPaths.next();
-			Iterator<Trajectory> itTrajectories = trajectories.map.values().iterator();
+		for (Path path : paths.values()) {
 			List<Double> speedsOfMoves = new ArrayList<>();
-			while (itTrajectories.hasNext()) {
-				Iterator<Move> itMoves = itTrajectories.next().moves.iterator();
-				while (itMoves.hasNext()) {
-					Move move = itMoves.next();
+			for (Trajectory trajectory : trajectories.map.values()) {
+				for (Move move : trajectory.moves) {
 					if (move.startPosition == path.startPosition && move.endPosition == path.endPosition
 							|| move.startPosition == path.endPosition && move.endPosition == path.startPosition) {
 						speedsOfMoves.add(move.speed);
 					}
 				}
 			}
-			System.out.println(speedsOfMoves);
 			averageSpeedsOfPaths.put(path, calculateAverage(speedsOfMoves));
 		}
 		return averageSpeedsOfPaths;

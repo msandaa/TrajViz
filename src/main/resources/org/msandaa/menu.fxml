@@ -14,7 +14,6 @@
     </Menu>
       <Menu mnemonicParsing="false" text="Edit">
         <items>
-          <MenuItem mnemonicParsing="false" onAction="#drawAll" text="Draw all Trajectoryies" />
             <MenuItem mnemonicParsing="false" onAction="#drawSelected" text="Draw selected Trajectories" />
         </items>
       </Menu>
