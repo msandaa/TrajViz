@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Move {
 
+	public final String id;
 	public final Position startPosition;
 	public final Position endPosition;
 	public final Date startTime;
@@ -13,6 +14,7 @@ public class Move {
 	public final double speed;
 
 	public Move(Position startPosition, Position endPosition, Date startTime, Date endTime) {
+		id = id(startPosition.name, endPosition.name);
 		this.startPosition = startPosition;
 		this.endPosition = endPosition;
 		this.startTime = startTime;
@@ -22,6 +24,10 @@ public class Move {
 		timedifferenz = endTime.getTime() - startTime.getTime();
 		System.out.println(timedifferenz);
 		speed = distance / timedifferenz;
+	}
+
+	private String id(String startPosition, String endPosition) {
+		return startPosition + " - " + endPosition;
 	}
 
 	@Override

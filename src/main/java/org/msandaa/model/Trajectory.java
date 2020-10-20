@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Trajectory {
 
-	private final String id;
+	public final String id;
 	private final List<DataPoint> pointList;
 	public final List<Move> moves;
 

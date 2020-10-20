@@ -2,9 +2,13 @@ package org.msandaa;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.msandaa.model.Move;
+import org.msandaa.model.Path;
 import org.msandaa.model.Roadmap;
 import org.msandaa.model.Trajectories;
 import org.msandaa.model.Trajectory;
@@ -51,6 +55,10 @@ public class Controller extends AnchorPane {
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
+		ToolbarController toolbar = new ToolbarController(this);
+		AnchorPane.setTopAnchor(toolbar, 20.0);
+		AnchorPane.setLeftAnchor(toolbar, 20.0);
+		this.getChildren().add(toolbar);
 	}
 
 	public void setTrajectories(Trajectories t) {
@@ -58,7 +66,7 @@ public class Controller extends AnchorPane {
 	}
 
 	public void drawTrajectorys() {
-		view.drawTrajectorys(trajectories);
+		view.drawTrajectories(trajectories);
 	}
 
 	public void tryDrawTrajectory() {
@@ -71,10 +79,17 @@ public class Controller extends AnchorPane {
 		}
 	}
 
+	public void calculateAverageSpeed() {
+		Map<Path, Double> averageSpeedsOfPaths = calculateAverageSpeedOfPaths();
+		view.colorPaths(averageSpeedsOfPaths);
+	}
+
 	@FXML
-	void mouseClicked(MouseEvent event) {
-		System.out.println(anchorpane.getHeight() + "  anchor  " + anchorpane.getWidth());
-		System.out.println(subscene.getHeight() + "  subscene  " + subscene.getWidth());
+	public void mouseClicked(MouseEvent event) {
+		// System.out.println(anchorpane.getHeight() + " anchor " +
+		// anchorpane.getWidth());
+		// System.out.println(subscene.getHeight() + " subscene " +
+		// subscene.getWidth());
 		if (event.getButton() == MouseButton.PRIMARY) {
 			PickResult pickResult = event.getPickResult();
 			Node node = pickResult.getIntersectedNode();
@@ -93,13 +108,13 @@ public class Controller extends AnchorPane {
 	}
 
 	@FXML
-	void mousePressed(MouseEvent event) {
+	public void mousePressed(MouseEvent event) {
 		previousX = event.getSceneX();
 		previousY = event.getSceneY();
 	}
 
 	@FXML
-	void mouseDragged(MouseEvent event) {
+	public void mouseDragged(MouseEvent event) {
 		double xDiff, yDiff, currentX, currentY;
 		currentX = event.getSceneX();
 		currentY = event.getSceneY();
@@ -120,7 +135,7 @@ public class Controller extends AnchorPane {
 	}
 
 	@FXML
-	void mouseScroll(ScrollEvent event) {
+	public void mouseScroll(ScrollEvent event) {
 		double rotation = event.getDeltaY();
 		view.moveZ(rotation);
 	}
@@ -131,10 +146,16 @@ public class Controller extends AnchorPane {
 		view.setDefaultPosition(subscene.getWidth() / 2, subscene.getHeight() / 2, 0);
 		subscene.setRoot(view);
 		subscene.setCamera(cam);
-		System.out.println(anchorpane.getHeight() + "  anchor  " + anchorpane.getWidth());
-		System.out.println(subscene.getHeight() + "  subscene  " + subscene.getWidth());
+		// System.out.println(anchorpane.getHeight() + " anchor " +
+		// anchorpane.getWidth());
+		// System.out.println(subscene.getHeight() + " subscene " +
+		// subscene.getWidth());
 		// subscene.heightProperty().bind(anchorpane.heightProperty());
 		// subscene.widthProperty().bind(anchorpane.widthProperty());
+	}
+
+	public void deleteAll() {
+		view.deleteAll();
 	}
 
 	private ArrayList<Trajectory> trajektoriesBetweenSelectedPositions() {
@@ -156,4 +177,36 @@ public class Controller extends AnchorPane {
 		return trajectoriesList;
 	}
 
+	private Map<Path, Double> calculateAverageSpeedOfPaths() {
+		Map<Path, Double> averageSpeedsOfPaths = new HashMap<>();
+		Map<String, Path> paths = roadmap.paths;
+		Iterator<Path> itPaths = paths.values().iterator();
+		while (itPaths.hasNext()) {
+			Path path = itPaths.next();
+			Iterator<Trajectory> itTrajectories = trajectories.map.values().iterator();
+			List<Double> speedsOfMoves = new ArrayList<>();
+			while (itTrajectories.hasNext()) {
+				Iterator<Move> itMoves = itTrajectories.next().moves.iterator();
+				while (itMoves.hasNext()) {
+					Move move = itMoves.next();
+					if (move.startPosition == path.startPosition && move.endPosition == path.endPosition
+							|| move.startPosition == path.endPosition && move.endPosition == path.startPosition) {
+						speedsOfMoves.add(move.speed);
+					}
+				}
+			}
+			System.out.println(speedsOfMoves);
+			averageSpeedsOfPaths.put(path, calculateAverage(speedsOfMoves));
+		}
+		return averageSpeedsOfPaths;
+	}
+
+	private double calculateAverage(List<Double> list) {
+		double average = 0;
+		for (int i = 0; i < list.size(); i++) {
+			average = average + list.get(i);
+		}
+		average = average / list.size();
+		return average;
+	}
 }

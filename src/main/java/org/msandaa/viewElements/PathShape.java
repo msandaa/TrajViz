@@ -1,5 +1,6 @@
 package org.msandaa.viewElements;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 public class PathShape extends Line {
@@ -14,6 +15,13 @@ public class PathShape extends Line {
 	public PathShape(String id, double startX, double startY, double endX, double endY) {
 		super(startX, startY, endX, endY);
 		this.id = id;
+	}
+
+	public void setColor(Color color) {
+		System.out.println(color);
+		setStroke(color);
+		System.out.println("Hier");
+
 	}
 
 }
