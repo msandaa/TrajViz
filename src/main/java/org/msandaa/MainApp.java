@@ -15,7 +15,7 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		borderpane = FXMLLoader.load(getClass().getResource("main.fxml"));
-		borderpane.setTop(new Menu(stage));
+		borderpane.setTop(new MenuController(stage));
 		Scene scene = new Scene(borderpane);
 		scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 		stage.setTitle("TrajViz");

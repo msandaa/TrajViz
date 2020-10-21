@@ -1,17 +1,21 @@
 package org.msandaa;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.msandaa.model.Move;
 import org.msandaa.model.Path;
 import org.msandaa.model.Roadmap;
 import org.msandaa.model.Trajectory;
 import org.msandaa.viewElements.GraphShape;
+import org.msandaa.viewElements.MoveShape;
 import org.msandaa.viewElements.MoveableGroup;
 import org.msandaa.viewElements.RotatableGroup;
 import org.msandaa.viewElements.TrajectoryShape;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Translate;
 
@@ -21,7 +25,7 @@ public class View extends Group {
 	private RotatableGroup rotateableRoot = new RotatableGroup();
 
 	private GraphShape graph;
-	private Map<String, TrajectoryShape> listOfTrajectoryShapes = new HashMap<>();
+	private Map<String, Node> listOfTrajectoryShapes = new HashMap<>();
 	private int drawnTrajektories = 0;
 
 	public View(Roadmap roadmap) {
@@ -39,8 +43,32 @@ public class View extends Group {
 		updateDrawnTrajectorys();
 	}
 
-	public void colorizePaths(Map<Path, Double> avSpeeds) {
-		graph.color(avSpeeds);
+	public void drawMoves(List<Move> moves) {
+		for (Move move : moves) {
+			MoveShape moveShape = new MoveShape(move);
+			listOfTrajectoryShapes.put(move.id, moveShape);
+			moveShape.getTransforms().addAll(new Translate(0, 20 * drawnTrajektories, 0));
+			rotateableRoot.getChildren().add(moveShape);
+			updateDrawnTrajectorys();
+		}
+	}
+
+	public void drawWall(Trajectory trajectory, int moveElement, int moveIns, int moveOuts) {
+		TrajectoryShape trajectoryShape = new TrajectoryShape(trajectory.id, trajectory, moveElement, moveIns,
+				moveOuts);
+		listOfTrajectoryShapes.put(trajectory.id, trajectoryShape);
+		trajectoryShape.getTransforms().addAll(new Translate(0, 0, -20 * drawnTrajektories));
+		rotateableRoot.getChildren().add(trajectoryShape);
+		updateDrawnTrajectorys();
+	}
+
+	public void colorizePaths(Map<Path, Double> averageSpeeds) {
+		graph.colorizePaths(averageSpeeds);
+
+	}
+
+	public void decolorizePaths() {
+		graph.decolorizePaths();
 	}
 
 	public int getNumberOfDrawnTrajecotries() {
@@ -72,8 +100,8 @@ public class View extends Group {
 		this.getTransforms().addAll(new Translate(x, y, z));
 	}
 
-	public void deleteAll() {
-		for (TrajectoryShape trajectoryShape : listOfTrajectoryShapes.values()) {
+	public void deleteWall() {
+		for (Node trajectoryShape : listOfTrajectoryShapes.values()) {
 			rotateableRoot.getChildren().remove(trajectoryShape);
 		}
 		listOfTrajectoryShapes.clear();
@@ -95,4 +123,5 @@ public class View extends Group {
 	private void updateDrawnTrajectorys() {
 		drawnTrajektories = listOfTrajectoryShapes.size();
 	}
+
 }

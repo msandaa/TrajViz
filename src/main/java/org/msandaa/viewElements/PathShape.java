@@ -18,10 +18,7 @@ public class PathShape extends Line {
 	}
 
 	public void setColor(Color color) {
-		System.out.println(color);
 		setStroke(color);
-		System.out.println("Hier");
-
 	}
 
 }

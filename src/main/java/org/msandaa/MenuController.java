@@ -23,7 +23,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class Menu extends MenuBar {
+public class MenuController extends MenuBar {
 
 	private Roadmap roadmap;
 	private Trajectories trajectories;
@@ -31,10 +31,8 @@ public class Menu extends MenuBar {
 	private Stage stage;
 	private Controller controller;
 
-	public Menu(Stage stage) {
-
+	public MenuController(Stage stage) {
 		this.stage = stage;
-
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("menu.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
@@ -43,7 +41,6 @@ public class Menu extends MenuBar {
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
-
 	}
 
 	@FXML
@@ -73,7 +70,7 @@ public class Menu extends MenuBar {
 
 	@FXML
 	void drawSelected(ActionEvent event) {
-		controller.tryDrawTrajectory();
+		// controller.tryDrawTrajectory();
 	}
 
 }

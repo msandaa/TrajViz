@@ -3,7 +3,6 @@ package org.msandaa;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,12 +27,14 @@ import javafx.scene.paint.Color;
 
 public class Controller extends AnchorPane {
 
+	// Model
 	private Roadmap roadmap;
 	private Trajectories trajectories;
 
+	// View of Model
 	private View view;
 
-	private ArrayList<PositionShape> selected = new ArrayList<>();
+	private List<PositionShape> selectedPositions = new ArrayList<>();
 
 	private double previousX;
 	private double previousY;
@@ -65,19 +66,38 @@ public class Controller extends AnchorPane {
 		trajectories = t;
 	}
 
-	public void tryDrawTrajectory() {
-		if (selected.size() == 2) {
-			ArrayList<Trajectory> trajectorys = trajektoriesBetweenSelectedPositions();
-			for (int i = 0; i < trajectorys.size(); i++) {
-				Trajectory t = trajectorys.get(i);
-				view.drawTrajectory(t);
+	public void tryDrawWall(int MovesIn, int MovesOut) {
+		if (selectedPositions.size() == 2) {
+			for (Map.Entry<Trajectory, Integer> entry : trajectorypPartsBetweenSelectedPositions().entrySet()) {
+				view.drawWall(entry.getKey(), entry.getValue(), MovesIn, MovesOut);
 			}
 		}
 	}
 
-	public void calculateAverageSpeed() {
-		Map<Path, Double> averageSpeedsOfPaths = calculateAverageSpeedOfPaths();
-		view.colorizePaths(averageSpeedsOfPaths);
+	public void updateMovesInOut(int MoveIn, int MoveOut) {
+		view.deleteWall();
+		tryDrawWall(MoveIn, MoveOut);
+	}
+
+	public void switchOnAverageSpeed(boolean on) {
+		if (on) {
+			Map<Path, Double> averageSpeedsOfPaths = calculateAverageSpeedOfPaths();
+			view.colorizePaths(averageSpeedsOfPaths);
+		} else {
+			view.decolorizePaths();
+		}
+	}
+
+	public void deleteAll() {
+		view.deleteWall();
+		deleteSelectedPositions();
+	}
+
+	private void deleteSelectedPositions() {
+		for (PositionShape posShape : selectedPositions) {
+			posShape.setFill(Color.BLACK);
+		}
+		selectedPositions.clear();
 	}
 
 	@FXML
@@ -91,15 +111,13 @@ public class Controller extends AnchorPane {
 			Node node = pickResult.getIntersectedNode();
 			if (node instanceof PositionShape) {
 				PositionShape posShape = (PositionShape) node;
-				selected.add(posShape);
-				posShape.setFill(Color.RED);
+				if (selectedPositions.size() < 2) {
+					selectedPositions.add(posShape);
+					posShape.setFill(Color.RED);
+				}
 			}
 		} else if (event.getButton() == MouseButton.SECONDARY) {
-			for (int i = 0; i < selected.size(); i++) {
-				PositionShape posShape = selected.get(i);
-				posShape.setFill(Color.BLACK);
-			}
-			selected.clear();
+
 		}
 	}
 
@@ -150,29 +168,6 @@ public class Controller extends AnchorPane {
 		// subscene.widthProperty().bind(anchorpane.widthProperty());
 	}
 
-	public void deleteAll() {
-		view.deleteAll();
-	}
-
-	private ArrayList<Trajectory> trajektoriesBetweenSelectedPositions() {
-		ArrayList<Trajectory> trajectoriesList = new ArrayList<Trajectory>();
-		Iterator<Trajectory> it = trajectories.map.values().iterator();
-		for (int i = 0; it.hasNext(); i++) {
-			Trajectory traj = it.next();
-			for (int j = 0; j < traj.moves.size(); j++) {
-				Move move = traj.moves.get(j);
-				String selX1 = selected.get(0).id;
-				String selX2 = selected.get(1).id;
-				String moveX1 = move.startPosition.name;
-				String moveX2 = move.endPosition.name;
-				if (moveX1.equals(selX1) && moveX2.equals(selX2) || moveX1.equals(selX2) && moveX2.equals(selX1)) {
-					trajectoriesList.add(traj);
-				}
-			}
-		}
-		return trajectoriesList;
-	}
-
 	private Map<Path, Double> calculateAverageSpeedOfPaths() {
 		Map<Path, Double> averageSpeedsOfPaths = new HashMap<>();
 		Map<String, Path> paths = roadmap.paths;
@@ -198,5 +193,22 @@ public class Controller extends AnchorPane {
 		}
 		average = average / list.size();
 		return average;
+	}
+
+	private Map<Trajectory, Integer> trajectorypPartsBetweenSelectedPositions() {
+		HashMap<Trajectory, Integer> trajectoriesMap = new HashMap<>();
+		for (Trajectory trajectory : trajectories.map.values()) {
+			for (int j = 0; j < trajectory.moves.size(); j++) {
+				Move move = trajectory.moves.get(j);
+				String selX1 = selectedPositions.get(0).id;
+				String selX2 = selectedPositions.get(1).id;
+				String moveX1 = move.startPosition.name;
+				String moveX2 = move.endPosition.name;
+				if (moveX1.equals(selX1) && moveX2.equals(selX2) || moveX1.equals(selX2) && moveX2.equals(selX1)) {
+					trajectoriesMap.put(trajectory, j);
+				}
+			}
+		}
+		return trajectoriesMap;
 	}
 }

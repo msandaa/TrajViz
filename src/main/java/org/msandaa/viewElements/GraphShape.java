@@ -7,10 +7,10 @@ import org.msandaa.View;
 import org.msandaa.model.Path;
 import org.msandaa.model.Position;
 import org.msandaa.model.Roadmap;
-import org.msandaa.model.Trajectories;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 public class GraphShape extends Group {
 
@@ -31,16 +31,11 @@ public class GraphShape extends Group {
 
 	}
 
-	public void color(Map<Path, Double> averageSpeedOfPaths) {
+	public void colorizePaths(Map<Path, Double> averageSpeedOfPaths) {
 
-		Iterator<Path> itPath = averageSpeedOfPaths.keySet().iterator();
-
-		while (itPath.hasNext()) {
-			Path path = itPath.next();
+		for (Path path : averageSpeedOfPaths.keySet()) {
 			String pathId = path.name;
-			Iterator<Node> itNodes = getChildren().iterator();
-			while (itNodes.hasNext()) {
-				Node node = itNodes.next();
+			for (Node node : getChildren()) {
 				if (node instanceof PathShape) {
 					PathShape pathShape = (PathShape) node;
 					String pathShapeId = pathShape.id;
@@ -50,14 +45,16 @@ public class GraphShape extends Group {
 				}
 			}
 		}
-	}
-
-	private void calculateColorForPath(Trajectories t, Roadmap roadmap) {
 
 	}
 
-	public void deleteColor() {
-
+	public void decolorizePaths() {
+		for (Node node : getChildren()) {
+			if (node instanceof PathShape) {
+				PathShape pathShape = (PathShape) node;
+				pathShape.setColor(Color.BLACK);
+			}
+		}
 	}
 
 }
