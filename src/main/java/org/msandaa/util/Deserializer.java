@@ -18,8 +18,9 @@ import java.util.stream.Stream;
 
 import org.msandaa.model.DataPoint;
 import org.msandaa.model.Path;
-import org.msandaa.model.Position;
+import org.msandaa.model.PathGuidePoint;
 import org.msandaa.model.Roadmap;
+import org.msandaa.model.Station;
 import org.msandaa.model.Trajectories;
 import org.msandaa.model.Trajectory;
 
@@ -53,6 +54,7 @@ public class Deserializer {
 
 		public String a;
 		public String b;
+		public List<DesPoint> cross;
 
 		@Override
 		public String toString() {
@@ -120,7 +122,7 @@ public class Deserializer {
 			if (!keyNotFound.isEmpty()) {
 				throw new FileMappingException.KeyNotFound(keyNotFound);
 			}
-			Map<String, Position> positions = mappingPositions(posNode.toString());
+			Map<String, Station> positions = mappingPositions(posNode.toString());
 			Map<String, Path> paths = mappingPaths(positions, pathNode.toString());
 
 			MAPPER.disable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
@@ -131,19 +133,19 @@ public class Deserializer {
 		}
 	}
 
-	private static Map<String, Position> mappingPositions(final String jsonPos) throws FileMappingException {
+	private static Map<String, Station> mappingPositions(final String jsonPos) throws FileMappingException {
 		try {
 			Map<String, DesPoint> points = MAPPER.readValue(jsonPos, new TypeReference<Map<String, DesPoint>>() {
 			});
-			Map<String, Position> positions = new HashMap<>(points.size());
-			points.forEach((key, value) -> positions.put(key, new Position(key, value.x, value.y)));
+			Map<String, Station> positions = new HashMap<>(points.size());
+			points.forEach((key, value) -> positions.put(key, new Station(key, value.x, value.y)));
 			return positions;
 		} catch (JsonProcessingException e) {
 			throw new FileMappingException(e);
 		}
 	}
 
-	private static Map<String, Path> mappingPaths(final Map<String, Position> positions, final String jsonPath)
+	private static Map<String, Path> mappingPaths(final Map<String, Station> positions, final String jsonPath)
 			throws FileMappingException {
 		try {
 			List<DesPath> desPaths = MAPPER.readValue(jsonPath, new TypeReference<List<DesPath>>() {
@@ -151,17 +153,21 @@ public class Deserializer {
 			Map<String, Path> paths = new HashMap<>(desPaths.size());
 			Set<String> posNotFound = new HashSet<>();
 			for (DesPath desPath : desPaths) {
-				Position startPosition = positions.get(desPath.a);
-				Position endPosition = positions.get(desPath.b);
+				Station startPosition = positions.get(desPath.a);
+				Station endPosition = positions.get(desPath.b);
 				if (startPosition == null) {
 					posNotFound.add(desPath.a);
 				}
 				if (endPosition == null) {
 					posNotFound.add(desPath.b);
 				}
+				ArrayList<PathGuidePoint> crossPoints = new ArrayList<>();
+				for (DesPoint desPoint : desPath.cross) {
+					crossPoints.add(new PathGuidePoint(desPoint.x, desPoint.y));
+				}
 				if (startPosition != null && endPosition != null) {
-					Path nPath = new Path(startPosition, endPosition);
-					paths.put(nPath.name, nPath);
+					Path nPath = new Path(startPosition, endPosition, crossPoints);
+					paths.put(nPath.id, nPath);
 				}
 			}
 			if (!posNotFound.isEmpty()) {
@@ -189,7 +195,7 @@ public class Deserializer {
 				trajectory.add(new DataPoint(roadmap.positions.get(desPointTraj.station),
 						dateformatter.parse(desPointTraj.time)));
 			}
-			trajectories.put(entry.getKey(), new Trajectory(entry.getKey(), trajectory));
+			trajectories.put(entry.getKey(), new Trajectory(entry.getKey(), roadmap, trajectory));
 		}
 		return new Trajectories(trajectories);
 	}

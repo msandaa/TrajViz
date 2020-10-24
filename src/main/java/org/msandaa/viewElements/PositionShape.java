@@ -1,5 +1,7 @@
 package org.msandaa.viewElements;
 
+import org.msandaa.model.Station;
+
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
@@ -31,6 +33,9 @@ public class PositionShape extends Circle {
 		super(radius);
 		this.id = id;
 	}
-	
-	
+
+	public PositionShape(Station position) {
+		this(position.id, position.x * 10, -position.y * 10, 4);
+	}
+
 }

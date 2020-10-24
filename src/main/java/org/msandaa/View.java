@@ -108,16 +108,19 @@ public class View extends Group {
 		updateDrawnTrajectorys();
 	}
 
-	public static Color speedToColor(Double speed) {
-		if (0 <= speed && speed < 0.0005) {
+	public static Color speedToColor(double speed) {
+		if (speed < 0.5) {
 			return Color.RED;
-		} else if (0.0005 <= speed && speed < 0.001) {
+		} else if (speed < 1) {
+			return Color.web("#FF8000");
+		} else if (speed < 1.5) {
 			return Color.YELLOW;
-		} else if (0.001 <= speed && speed < 0.002) {
-			return Color.GREEN;
-		} else {
-			return Color.LIGHTGRAY;
+		} else if (speed < 2.0) {
+			return Color.web("#80FF00");
+		} else if (speed < 2.5) {
+			return Color.LIME;
 		}
+		return Color.LIGHTGRAY;
 	}
 
 	private void updateDrawnTrajectorys() {

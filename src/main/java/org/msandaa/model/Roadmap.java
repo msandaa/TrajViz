@@ -6,15 +6,15 @@ import java.util.Objects;
 
 public class Roadmap {
 
-	public final Map<String, Position> positions;
+	public final Map<String, Station> positions;
 	public final Map<String, Path> paths;
 
-	public Roadmap(Map<String, Position> positions, Map<String, Path> paths) {
+	public Roadmap(Map<String, Station> positions, Map<String, Path> paths) {
 		this.positions = Collections.unmodifiableMap(positions);
 		this.paths = Collections.unmodifiableMap(paths);
 	}
 
-	public Position getPosition(String name) {
+	public Station getPosition(String name) {
 		return positions.get(name);
 	}
 
@@ -33,7 +33,7 @@ public class Roadmap {
 	@Override
 	public String toString() {
 		StringBuilder bld = new StringBuilder();
-		for (Position position : positions.values()) {
+		for (Station position : positions.values()) {
 			bld.append(position.toString() + System.lineSeparator());
 		}
 		for (String roadmapPath : paths.keySet()) {

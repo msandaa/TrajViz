@@ -3,30 +3,89 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="101.0" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="339.0" prefWidth="102.0" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff8000" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#80ff00" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="LIME" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-      <CheckBox fx:id="speedCheckBox" focusTraversable="false" mnemonicParsing="false" onAction="#speedCheckBoxClicked" text="Speed">
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 0.5 m/s">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Text>
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="283.0" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff8000" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 1 m/s">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Text>
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="297.0" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 1,5 m/s">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Text>
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="301.0" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#80ff00" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 2 m/s">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Text>
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="304.0" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="LIME" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 2,5 m/s">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Text>
+         </children>
+      </HBox>
+      <CheckBox fx:id="speedCheckBox" focusTraversable="false" mnemonicParsing="false" onAction="#speedCheckBoxClicked" text="Heatmap">
          <padding>
-            <Insets bottom="5.0" top="5.0" />
+            <Insets bottom="8.0" top="8.0" />
          </padding></CheckBox>
-      <Slider fx:id="sliderMovesIn" blockIncrement="1.0" focusTraversable="false" majorTickUnit="1.0" max="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true">
-         <padding>
-            <Insets bottom="5.0" top="5.0" />
-         </padding></Slider>
-      <Slider fx:id="sliderMovesOut" blockIncrement="1.0" focusTraversable="false" majorTickUnit="1.0" max="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true">
-         <padding>
-            <Insets bottom="5.0" top="5.0" />
-         </padding>
-      </Slider>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Label text="Moves In" />
+            <Slider fx:id="sliderMovesIn" blockIncrement="1.0" focusTraversable="false" majorTickUnit="1.0" max="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true">
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
+            </Slider>
+         </children>
+      </VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Label text="Moves Out" />
+            <Slider fx:id="sliderMovesOut" blockIncrement="1.0" focusTraversable="false" majorTickUnit="1.0" max="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true">
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
+            </Slider>
+         </children>
+      </VBox>
       <Button focusTraversable="false" mnemonicParsing="false" onAction="#drawWall" prefHeight="25.0" prefWidth="100.0" text="Draw" />
       <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteWall" prefHeight="25.0" prefWidth="100.0" text="Delete" />
    </children>

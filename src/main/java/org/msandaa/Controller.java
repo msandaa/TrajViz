@@ -117,7 +117,6 @@ public class Controller extends AnchorPane {
 				}
 			}
 		} else if (event.getButton() == MouseButton.SECONDARY) {
-
 		}
 	}
 
@@ -175,9 +174,10 @@ public class Controller extends AnchorPane {
 			List<Double> speedsOfMoves = new ArrayList<>();
 			for (Trajectory trajectory : trajectories.map.values()) {
 				for (Move move : trajectory.moves) {
-					if (move.startPosition == path.startPosition && move.endPosition == path.endPosition
-							|| move.startPosition == path.endPosition && move.endPosition == path.startPosition) {
-						speedsOfMoves.add(move.speed);
+					if (move.path.startPosition == path.startPosition && move.path.endPosition == path.endPosition
+							|| move.path.startPosition == path.endPosition
+									&& move.path.endPosition == path.startPosition) {
+						speedsOfMoves.add(move.speedInMpS);
 					}
 				}
 			}
@@ -202,8 +202,8 @@ public class Controller extends AnchorPane {
 				Move move = trajectory.moves.get(j);
 				String selX1 = selectedPositions.get(0).id;
 				String selX2 = selectedPositions.get(1).id;
-				String moveX1 = move.startPosition.name;
-				String moveX2 = move.endPosition.name;
+				String moveX1 = move.path.startPosition.id;
+				String moveX2 = move.path.endPosition.id;
 				if (moveX1.equals(selX1) && moveX2.equals(selX2) || moveX1.equals(selX2) && moveX2.equals(selX1)) {
 					trajectoriesMap.put(trajectory, j);
 				}
