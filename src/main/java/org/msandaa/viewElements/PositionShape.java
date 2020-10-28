@@ -35,7 +35,7 @@ public class PositionShape extends Circle {
 	}
 
 	public PositionShape(Station position) {
-		this(position.id, position.x * 10, -position.y * 10, 4);
+		this(position.id, position.x * 10, -position.y * 10, 5);
 	}
 
 }

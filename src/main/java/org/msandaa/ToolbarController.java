@@ -45,6 +45,11 @@ public class ToolbarController extends VBox {
 	}
 
 	@FXML
+	void deleteChart(ActionEvent event) {
+		controller.deleteChart();
+	}
+
+	@FXML
 	public void drawWall(ActionEvent event) {
 		controller.tryDrawWall((int) sliderMovesIn.getValue(), (int) sliderMovesOut.getValue());
 	}

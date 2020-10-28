@@ -18,11 +18,32 @@ public class PathShape extends Path {
 		this.id = path.id;
 		// strokeProperty().bind(fillProperty());
 		// setFill(Color.BLACK);
+		setStrokeWidth(3);
 
-		double startX = path.startPosition.x * 10;
-		double startY = -path.startPosition.y * 10;
-		double endX = path.endPosition.x * 10;
-		double endY = -path.endPosition.y * 10;
+		double startX = path.startStation.x * 10;
+		double startY = -path.startStation.y * 10;
+		double endX = path.endStation.x * 10;
+		double endY = -path.endStation.y * 10;
+
+		// short the firstLine
+		double endfirstLineX;
+		double endfirstLineZ;
+
+		if (path.guidePoints.size() > 0) {
+			double firstGuidePointX = path.guidePoints.get(0).x * 10;
+			double firstGuidePointY = -path.guidePoints.get(0).y * 10;
+			endfirstLineX = firstGuidePointX;
+			endfirstLineZ = firstGuidePointY;
+		} else {
+			endfirstLineX = endX;
+			endfirstLineZ = endY;
+		}
+
+		double alpha1 = Math.atan2((endfirstLineZ - startY), (endfirstLineX - startX));
+		double yShortFirstLine = Math.sin(alpha1) * 7;
+		double xShortFirstLine = Math.cos(alpha1) * 7;
+		startX += xShortFirstLine;
+		startY += yShortFirstLine;
 
 		getElements().add(new MoveTo(startX, startY));
 
@@ -33,12 +54,12 @@ public class PathShape extends Path {
 			startY = -guidePoint.y * 10;
 		}
 
-		// short the endElement
+		// short the lastLine
 		double alpha = Math.atan2((endY - startY), (endX - startX));
-		double yShorting = Math.sin(alpha) * 5;
-		double xShorting = Math.cos(alpha) * 5;
-		endX = endX - xShorting;
-		endY = endY - yShorting;
+		double yShortLastLine = Math.sin(alpha) * 8;
+		double xShortLastLine = Math.cos(alpha) * 8;
+		endX = endX - xShortLastLine;
+		endY = endY - yShortLastLine;
 
 		getElements().add(new LineTo(endX, endY));
 

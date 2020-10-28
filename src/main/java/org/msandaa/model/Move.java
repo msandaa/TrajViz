@@ -12,7 +12,7 @@ public class Move {
 	public final double speedInMpS;
 
 	public Move(Path path, Date startTime, Date endTime) {
-		id = id(path.startPosition.id, path.endPosition.id);
+		id = id(path.startStation.id, path.endStation.id);
 		this.path = path;
 		this.startTime = startTime;
 		this.endTime = endTime;

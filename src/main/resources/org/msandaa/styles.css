@@ -1,3 +1,18 @@
 .button {
     -fx-text-fill: blue;
 }
+.default-color0.chart-bar {
+    -fx-bar-fill: red; 
+    }
+.default-color1.chart-bar { 
+    -fx-bar-fill: #FF8000; 
+    }
+.default-color2.chart-bar {
+    -fx-bar-fill: yellow; 
+    }
+.default-color3.chart-bar { 
+    -fx-bar-fill: #80FF00; 
+    }
+.default-color4.chart-bar {
+    -fx-bar-fill: lime; 
+    }

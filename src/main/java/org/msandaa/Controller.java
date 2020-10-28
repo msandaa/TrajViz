@@ -11,6 +11,7 @@ import org.msandaa.model.Path;
 import org.msandaa.model.Roadmap;
 import org.msandaa.model.Trajectories;
 import org.msandaa.model.Trajectory;
+import org.msandaa.viewElements.PathShape;
 import org.msandaa.viewElements.PositionShape;
 
 import javafx.fxml.FXML;
@@ -39,6 +40,8 @@ public class Controller extends AnchorPane {
 	private double previousX;
 	private double previousY;
 
+	private ChartTime chart = new ChartTime();
+
 	@FXML
 	public AnchorPane anchorpane;
 	@FXML
@@ -59,7 +62,9 @@ public class Controller extends AnchorPane {
 		ToolbarController toolbar = new ToolbarController(this);
 		AnchorPane.setTopAnchor(toolbar, 20.0);
 		AnchorPane.setLeftAnchor(toolbar, 20.0);
-		this.getChildren().add(toolbar);
+		AnchorPane.setRightAnchor(chart, 20.0);
+		AnchorPane.setBottomAnchor(chart, 20.0);
+		this.getChildren().addAll(toolbar, chart);
 	}
 
 	public void setTrajectories(Trajectories t) {
@@ -93,6 +98,10 @@ public class Controller extends AnchorPane {
 		deleteSelectedPositions();
 	}
 
+	public void deleteChart() {
+		chart.delete();
+	}
+
 	private void deleteSelectedPositions() {
 		for (PositionShape posShape : selectedPositions) {
 			posShape.setFill(Color.BLACK);
@@ -115,9 +124,31 @@ public class Controller extends AnchorPane {
 					selectedPositions.add(posShape);
 					posShape.setFill(Color.RED);
 				}
+			} else if (node instanceof PathShape) {
+				System.out.println("PathClicked");
+				PathShape pathShape = (PathShape) node;
+				Path path = roadmap.getPath(pathShape.id);
+				chart.draw(movesBetweenStations(path.startStation.id, path.endStation.id));
 			}
 		} else if (event.getButton() == MouseButton.SECONDARY) {
+			// graph.delete();
 		}
+	}
+
+	private List<Move> movesBetweenStations(String startStation, String endStation) {
+		List<Move> moves = new ArrayList<>();
+		for (Trajectory trajectory : trajectories.map.values()) {
+			for (int j = 0; j < trajectory.moves.size(); j++) {
+				Move move = trajectory.moves.get(j);
+				String moveX1 = move.path.startStation.id;
+				String moveX2 = move.path.endStation.id;
+				if (moveX1.equals(startStation) && moveX2.equals(endStation)
+						|| moveX1.equals(endStation) && moveX2.equals(startStation)) {
+					moves.add(move);
+				}
+			}
+		}
+		return moves;
 	}
 
 	@FXML
@@ -174,9 +205,8 @@ public class Controller extends AnchorPane {
 			List<Double> speedsOfMoves = new ArrayList<>();
 			for (Trajectory trajectory : trajectories.map.values()) {
 				for (Move move : trajectory.moves) {
-					if (move.path.startPosition == path.startPosition && move.path.endPosition == path.endPosition
-							|| move.path.startPosition == path.endPosition
-									&& move.path.endPosition == path.startPosition) {
+					if (move.path.startStation == path.startStation && move.path.endStation == path.endStation
+							|| move.path.startStation == path.endStation && move.path.endStation == path.startStation) {
 						speedsOfMoves.add(move.speedInMpS);
 					}
 				}
@@ -202,8 +232,8 @@ public class Controller extends AnchorPane {
 				Move move = trajectory.moves.get(j);
 				String selX1 = selectedPositions.get(0).id;
 				String selX2 = selectedPositions.get(1).id;
-				String moveX1 = move.path.startPosition.id;
-				String moveX2 = move.path.endPosition.id;
+				String moveX1 = move.path.startStation.id;
+				String moveX2 = move.path.endStation.id;
 				if (moveX1.equals(selX1) && moveX2.equals(selX2) || moveX1.equals(selX2) && moveX2.equals(selX1)) {
 					trajectoriesMap.put(trajectory, j);
 				}
@@ -211,4 +241,5 @@ public class Controller extends AnchorPane {
 		}
 		return trajectoriesMap;
 	}
+
 }

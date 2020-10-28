@@ -7,15 +7,15 @@ import java.util.Objects;
 public class Path {
 
 	public final String id;
-	public final Station startPosition;
-	public final Station endPosition;
+	public final Station startStation;
+	public final Station endStation;
 	public final List<PathGuidePoint> guidePoints;
 	public final List<GraphPoint> pathPoints;
 	public final double distanceInM;
 
 	public Path(Station startPosition, Station endPosition, List<PathGuidePoint> crossPoints) {
-		this.startPosition = Objects.requireNonNull(startPosition);
-		this.endPosition = Objects.requireNonNull(endPosition);
+		this.startStation = Objects.requireNonNull(startPosition);
+		this.endStation = Objects.requireNonNull(endPosition);
 		this.guidePoints = crossPoints;
 		id = startPosition.id + " - " + endPosition.id;
 		pathPoints = new ArrayList<>();
@@ -50,11 +50,11 @@ public class Path {
 		long temp;
 		temp = Double.doubleToLongBits(distanceInM);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((endPosition == null) ? 0 : endPosition.hashCode());
+		result = prime * result + ((endStation == null) ? 0 : endStation.hashCode());
 		result = prime * result + ((guidePoints == null) ? 0 : guidePoints.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((pathPoints == null) ? 0 : pathPoints.hashCode());
-		result = prime * result + ((startPosition == null) ? 0 : startPosition.hashCode());
+		result = prime * result + ((startStation == null) ? 0 : startStation.hashCode());
 		return result;
 	}
 
@@ -70,10 +70,10 @@ public class Path {
 		Path other = (Path) obj;
 		if (Double.doubleToLongBits(distanceInM) != Double.doubleToLongBits(other.distanceInM))
 			return false;
-		if (endPosition == null) {
-			if (other.endPosition != null)
+		if (endStation == null) {
+			if (other.endStation != null)
 				return false;
-		} else if (!endPosition.equals(other.endPosition))
+		} else if (!endStation.equals(other.endStation))
 			return false;
 		if (guidePoints == null) {
 			if (other.guidePoints != null)
@@ -90,10 +90,10 @@ public class Path {
 				return false;
 		} else if (!pathPoints.equals(other.pathPoints))
 			return false;
-		if (startPosition == null) {
-			if (other.startPosition != null)
+		if (startStation == null) {
+			if (other.startStation != null)
 				return false;
-		} else if (!startPosition.equals(other.startPosition))
+		} else if (!startStation.equals(other.startStation))
 			return false;
 		return true;
 	}
