@@ -10,7 +10,6 @@ import javafx.scene.shape.Path;
 public class PathShape extends Path {
 
 	private static final double defaultArrowHeadSize = 5.0;
-
 	public final String id;
 
 	public PathShape(org.msandaa.model.Path path) {

@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 
-import org.msandaa.model.Roadmap;
-import org.msandaa.model.Trajectories;
 import org.msandaa.util.Deserializer;
 import org.msandaa.util.Deserializer.FileInputException;
 import org.msandaa.util.Deserializer.FileMappingException;
@@ -24,9 +22,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MenuController extends MenuBar {
-
-	private Roadmap roadmap;
-	private Trajectories trajectories;
 
 	private Stage stage;
 	private Controller controller;
@@ -50,11 +45,8 @@ public class MenuController extends MenuBar {
 		if (file == null) {
 			return;
 		}
-		roadmap = Deserializer.fileToRoadmap(file);
-		controller = new Controller(roadmap);
+		controller = new Controller(Deserializer.fileToRoadmap(file));
 		((BorderPane) stage.getScene().getRoot()).setCenter(controller);
-		// controller.subscene.heightProperty().bind(borderpane.heightProperty());
-		// controller.subscene.widthProperty().bind(borderpane.widthProperty());
 	}
 
 	@FXML
@@ -64,8 +56,7 @@ public class MenuController extends MenuBar {
 		if (file == null) {
 			return;
 		}
-		trajectories = Deserializer.fileToTrajectories(roadmap, file);
-		controller.setTrajectories(trajectories);
+		controller.setTrajectories(Deserializer.fileToTrajectories(controller.roadmap, file));
 	}
 
 	@FXML

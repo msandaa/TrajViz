@@ -36,8 +36,16 @@ public class View extends Group {
 	}
 
 	public void drawTrajectory(Trajectory trajectory) {
-		TrajectoryShape trajectoryShape = new TrajectoryShape(trajectory.id, trajectory);
+		TrajectoryShape trajectoryShape = new TrajectoryShape(trajectory);
 		listOfTrajectoryShapes.put(trajectory.id, trajectoryShape);
+		trajectoryShape.getTransforms().addAll(new Translate(0, 0, -20 * drawnTrajektories));
+		rotateableRoot.getChildren().add(trajectoryShape);
+		updateDrawnTrajectorys();
+	}
+
+	public void drawTrajectory(Move move, int movesIn, int movesOut) {
+		TrajectoryShape trajectoryShape = new TrajectoryShape(move, movesIn, movesOut);
+		listOfTrajectoryShapes.put(move.trajectory.id, trajectoryShape);
 		trajectoryShape.getTransforms().addAll(new Translate(0, 0, -20 * drawnTrajektories));
 		rotateableRoot.getChildren().add(trajectoryShape);
 		updateDrawnTrajectorys();
@@ -51,15 +59,6 @@ public class View extends Group {
 			rotateableRoot.getChildren().add(moveShape);
 			updateDrawnTrajectorys();
 		}
-	}
-
-	public void drawWall(Trajectory trajectory, int moveElement, int moveIns, int moveOuts) {
-		TrajectoryShape trajectoryShape = new TrajectoryShape(trajectory.id, trajectory, moveElement, moveIns,
-				moveOuts);
-		listOfTrajectoryShapes.put(trajectory.id, trajectoryShape);
-		trajectoryShape.getTransforms().addAll(new Translate(0, 0, -20 * drawnTrajektories));
-		rotateableRoot.getChildren().add(trajectoryShape);
-		updateDrawnTrajectorys();
 	}
 
 	public void colorizePaths(Map<Path, Double> averageSpeeds) {

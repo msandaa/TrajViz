@@ -16,7 +16,7 @@ public class Trajectory {
 			DataPoint startPoint = pointList.get(i);
 			DataPoint endPoint = pointList.get(i + 1);
 			Path path = roadmap.getPath(startPoint.station.id + " - " + endPoint.station.id);
-			movesL.add(new Move(path, startPoint.time, endPoint.time));
+			movesL.add(new Move(this, path, startPoint.time, endPoint.time, i));
 		}
 		moves = Collections.unmodifiableList(movesL);
 	}

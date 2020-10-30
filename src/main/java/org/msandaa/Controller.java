@@ -2,6 +2,7 @@ package org.msandaa;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import org.msandaa.model.Roadmap;
 import org.msandaa.model.Trajectories;
 import org.msandaa.model.Trajectory;
 import org.msandaa.viewElements.PathShape;
-import org.msandaa.viewElements.PositionShape;
+import org.msandaa.viewElements.StationShape;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,13 +30,13 @@ import javafx.scene.paint.Color;
 public class Controller extends AnchorPane {
 
 	// Model
-	private Roadmap roadmap;
+	public final Roadmap roadmap;
 	private Trajectories trajectories;
 
 	// View of Model
 	private View view;
 
-	private List<PositionShape> selectedPositions = new ArrayList<>();
+	private List<StationShape> selectedPositions = new ArrayList<>();
 
 	private double previousX;
 	private double previousY;
@@ -72,15 +73,15 @@ public class Controller extends AnchorPane {
 	}
 
 	public void tryDrawWall(int MovesIn, int MovesOut) {
+		view.deleteWall();
 		if (selectedPositions.size() == 2) {
-			for (Map.Entry<Trajectory, Integer> entry : trajectorypPartsBetweenSelectedPositions().entrySet()) {
-				view.drawWall(entry.getKey(), entry.getValue(), MovesIn, MovesOut);
+			for (Move move : movesBetweenSelectedPositions()) {
+				view.drawTrajectory(move, MovesIn, MovesOut);
 			}
 		}
 	}
 
 	public void updateMovesInOut(int MoveIn, int MoveOut) {
-		view.deleteWall();
 		tryDrawWall(MoveIn, MoveOut);
 	}
 
@@ -103,7 +104,7 @@ public class Controller extends AnchorPane {
 	}
 
 	private void deleteSelectedPositions() {
-		for (PositionShape posShape : selectedPositions) {
+		for (StationShape posShape : selectedPositions) {
 			posShape.setFill(Color.BLACK);
 		}
 		selectedPositions.clear();
@@ -111,44 +112,22 @@ public class Controller extends AnchorPane {
 
 	@FXML
 	public void mouseClicked(MouseEvent event) {
-		// System.out.println(anchorpane.getHeight() + " anchor " +
-		// anchorpane.getWidth());
-		// System.out.println(subscene.getHeight() + " subscene " +
-		// subscene.getWidth());
 		if (event.getButton() == MouseButton.PRIMARY) {
 			PickResult pickResult = event.getPickResult();
 			Node node = pickResult.getIntersectedNode();
-			if (node instanceof PositionShape) {
-				PositionShape posShape = (PositionShape) node;
+			if (node instanceof StationShape) {
+				StationShape posShape = (StationShape) node;
 				if (selectedPositions.size() < 2) {
 					selectedPositions.add(posShape);
 					posShape.setFill(Color.RED);
 				}
 			} else if (node instanceof PathShape) {
-				System.out.println("PathClicked");
 				PathShape pathShape = (PathShape) node;
 				Path path = roadmap.getPath(pathShape.id);
 				chart.draw(movesBetweenStations(path.startStation.id, path.endStation.id));
 			}
 		} else if (event.getButton() == MouseButton.SECONDARY) {
-			// graph.delete();
 		}
-	}
-
-	private List<Move> movesBetweenStations(String startStation, String endStation) {
-		List<Move> moves = new ArrayList<>();
-		for (Trajectory trajectory : trajectories.map.values()) {
-			for (int j = 0; j < trajectory.moves.size(); j++) {
-				Move move = trajectory.moves.get(j);
-				String moveX1 = move.path.startStation.id;
-				String moveX2 = move.path.endStation.id;
-				if (moveX1.equals(startStation) && moveX2.equals(endStation)
-						|| moveX1.equals(endStation) && moveX2.equals(startStation)) {
-					moves.add(move);
-				}
-			}
-		}
-		return moves;
 	}
 
 	@FXML
@@ -190,12 +169,8 @@ public class Controller extends AnchorPane {
 		view.setDefaultPosition(subscene.getWidth() / 2, subscene.getHeight() / 2, 0);
 		subscene.setRoot(view);
 		subscene.setCamera(cam);
-		// System.out.println(anchorpane.getHeight() + " anchor " +
-		// anchorpane.getWidth());
-		// System.out.println(subscene.getHeight() + " subscene " +
-		// subscene.getWidth());
-		// subscene.heightProperty().bind(anchorpane.heightProperty());
-		// subscene.widthProperty().bind(anchorpane.widthProperty());
+		subscene.widthProperty().bind(anchorpane.widthProperty());
+		subscene.heightProperty().bind(anchorpane.heightProperty());
 	}
 
 	private Map<Path, Double> calculateAverageSpeedOfPaths() {
@@ -225,8 +200,8 @@ public class Controller extends AnchorPane {
 		return average;
 	}
 
-	private Map<Trajectory, Integer> trajectorypPartsBetweenSelectedPositions() {
-		HashMap<Trajectory, Integer> trajectoriesMap = new HashMap<>();
+	private List<Move> movesBetweenSelectedPositions() {
+		List<Move> moves = new ArrayList<>();
 		for (Trajectory trajectory : trajectories.map.values()) {
 			for (int j = 0; j < trajectory.moves.size(); j++) {
 				Move move = trajectory.moves.get(j);
@@ -235,11 +210,29 @@ public class Controller extends AnchorPane {
 				String moveX1 = move.path.startStation.id;
 				String moveX2 = move.path.endStation.id;
 				if (moveX1.equals(selX1) && moveX2.equals(selX2) || moveX1.equals(selX2) && moveX2.equals(selX1)) {
-					trajectoriesMap.put(trajectory, j);
+					moves.add(move);
 				}
 			}
 		}
-		return trajectoriesMap;
+		Collections.sort(moves);
+		return moves;
+	}
+
+	private List<Move> movesBetweenStations(String startStation, String endStation) {
+		List<Move> moves = new ArrayList<>();
+		for (Trajectory trajectory : trajectories.map.values()) {
+			for (int j = 0; j < trajectory.moves.size(); j++) {
+				Move move = trajectory.moves.get(j);
+				String moveX1 = move.path.startStation.id;
+				String moveX2 = move.path.endStation.id;
+				if (moveX1.equals(startStation) && moveX2.equals(endStation)
+						|| moveX1.equals(endStation) && moveX2.equals(startStation)) {
+					moves.add(move);
+				}
+			}
+		}
+		Collections.sort(moves);
+		return moves;
 	}
 
 }

@@ -15,7 +15,7 @@ public class GraphShape extends Group {
 
 	public GraphShape(Roadmap roadmap) {
 		for (Station position : roadmap.positions.values()) {
-			getChildren().add(new PositionShape(position));
+			getChildren().add(new StationShape(position));
 		}
 		for (Path path : roadmap.paths.values()) {
 			getChildren().add(new PathShape(path));
@@ -23,7 +23,6 @@ public class GraphShape extends Group {
 	}
 
 	public void colorizePaths(Map<Path, Double> averageSpeedOfPaths) {
-
 		for (Path path : averageSpeedOfPaths.keySet()) {
 			String pathId = path.id;
 			for (Node node : getChildren()) {

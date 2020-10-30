@@ -61,7 +61,6 @@ public class ToolbarController extends VBox {
 				controller.updateMovesInOut(new_val.intValue(), (int) sliderMovesOut.getValue());
 			}
 		});
-
 		sliderMovesOut.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {

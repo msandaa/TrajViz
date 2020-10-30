@@ -14,10 +14,6 @@ public class MoveShape extends Group {
 
 	public MoveShape(Move move) {
 		this.id = move.id;
-		build(move);
-	}
-
-	private void build(Move move) {
 		double speed = move.speedInMpS;
 		for (int i = 0; i < move.path.pathPoints.size() - 1; i++) {
 			double startX = move.path.pathPoints.get(i).x;

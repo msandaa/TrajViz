@@ -11,38 +11,30 @@ import javafx.scene.paint.Paint;
 
 public class TrajectoryShape extends Group {
 
-	private String id;
+	public final String id;
 
-	public TrajectoryShape(String id, Trajectory trajectory) {
-		this.id = id;
-		build(trajectory);
+	public TrajectoryShape(Trajectory trajectory) {
+		this.id = trajectory.id;
+		for (Move move : trajectory.moves) {
+			getChildren().add(new MoveShape(move));
+		}
 	}
 
-	public TrajectoryShape(String id, Trajectory trajectory, int moveElement, int moveIns, int moveOuts) {
-		this.id = id;
-		build(trajectory, moveElement, moveIns, moveOuts);
-	}
-
-	private void build(Trajectory trajectory, int moveElement, int moveIns, int moveOuts) {
-		List<Move> moves = trajectory.moves;
-		getChildren().add(new MoveShape(moves.get(moveElement)));
+	public TrajectoryShape(Move move, int moveIns, int moveOuts) {
+		this.id = move.trajectory.id;
+		List<Move> moves = move.trajectory.moves;
+		getChildren().add(new MoveShape(moves.get(move.trajectoryPart)));
 		for (int i = 1; i <= moveIns; i++) {
 			try {
-				getChildren().add(new MoveShape(moves.get(moveElement - i)));
+				getChildren().add(new MoveShape(moves.get(move.trajectoryPart - i)));
 			} catch (IndexOutOfBoundsException e) {
 			}
 		}
 		for (int j = 1; j <= moveOuts; j++) {
 			try {
-				getChildren().add(new MoveShape(moves.get(moveElement + j)));
+				getChildren().add(new MoveShape(moves.get(move.trajectoryPart + j)));
 			} catch (IndexOutOfBoundsException e) {
 			}
-		}
-	}
-
-	private void build(Trajectory trajectory) {
-		for (Move move : trajectory.moves) {
-			getChildren().add(new MoveShape(move));
 		}
 	}
 
