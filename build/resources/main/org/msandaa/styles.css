@@ -16,3 +16,6 @@
 .default-color4.chart-bar {
     -fx-bar-fill: lime; 
     }
+.default-color5.chart-bar {
+    -fx-bar-fill: lightgrey; 
+    }

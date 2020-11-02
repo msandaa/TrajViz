@@ -32,6 +32,7 @@ public class ChartTime extends StackPane {
 	private final XYChart.Series<String, Number> series3 = new XYChart.Series<String, Number>();
 	private final XYChart.Series<String, Number> series4 = new XYChart.Series<String, Number>();
 	private final XYChart.Series<String, Number> series5 = new XYChart.Series<String, Number>();
+	private final XYChart.Series<String, Number> series6 = new XYChart.Series<String, Number>();
 
 	public ChartTime() {
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("chart1.fxml"));
@@ -48,6 +49,7 @@ public class ChartTime extends StackPane {
 
 	public void draw(List<Move> movesBetweenStations) {
 		delete();
+		System.out.println(movesBetweenStations.size());
 		Map<String, List<Move>> moves = new HashMap<>();
 		for (Move move : movesBetweenStations) {
 			SimpleDateFormat format = new SimpleDateFormat("HH:mm");
@@ -57,11 +59,16 @@ public class ChartTime extends StackPane {
 			}
 			moves.get(hrmin).add(move);
 		}
-		int i = 0;
+		double s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 0, s6 = 0;
 		String category;
 		for (Map.Entry<String, List<Move>> entry : moves.entrySet()) {
 			List<Move> movesList = entry.getValue();
-			double s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 0;
+			s1 = 0;
+			s2 = 0;
+			s3 = 0;
+			s4 = 0;
+			s5 = 0;
+			s6 = 0;
 			for (Move move : movesList) {
 				double speed = move.speedInMpS;
 				if (speed < 0.5) {
@@ -74,6 +81,8 @@ public class ChartTime extends StackPane {
 					s4++;
 				} else if (speed < 2.5) {
 					s5++;
+				} else {
+					s6++;
 				}
 			}
 			category = entry.getKey();
@@ -82,11 +91,11 @@ public class ChartTime extends StackPane {
 			series3.getData().add(new XYChart.Data<String, Number>(category, s3));
 			series4.getData().add(new XYChart.Data<String, Number>(category, s4));
 			series5.getData().add(new XYChart.Data<String, Number>(category, s5));
-			i++;
+			series6.getData().add(new XYChart.Data<String, Number>(category, s6));
 		}
 
 		xAxis.setCategories(FXCollections.<String>observableArrayList(moves.keySet()));
-		barChart.getData().addAll(series1, series2, series3, series4, series5);
+		barChart.getData().addAll(series1, series2, series3, series4, series5, series6);
 	}
 
 	public void delete() {
@@ -96,6 +105,7 @@ public class ChartTime extends StackPane {
 		series3.getData().clear();
 		series4.getData().clear();
 		series5.getData().clear();
+		series6.getData().clear();
 		barChart.getData().clear();
 	}
 
