@@ -27,6 +27,7 @@ public class ChartTime extends StackPane {
 	@FXML
 	StackedBarChart<String, Number> barChart;
 
+	private final XYChart.Series<String, Number> series0 = new XYChart.Series<String, Number>();
 	private final XYChart.Series<String, Number> series1 = new XYChart.Series<String, Number>();
 	private final XYChart.Series<String, Number> series2 = new XYChart.Series<String, Number>();
 	private final XYChart.Series<String, Number> series3 = new XYChart.Series<String, Number>();
@@ -86,6 +87,7 @@ public class ChartTime extends StackPane {
 				}
 			}
 			category = entry.getKey();
+			series0.getData().add(new XYChart.Data<String, Number>(category, 0));
 			series1.getData().add(new XYChart.Data<String, Number>(category, s1));
 			series2.getData().add(new XYChart.Data<String, Number>(category, s2));
 			series3.getData().add(new XYChart.Data<String, Number>(category, s3));
@@ -95,11 +97,12 @@ public class ChartTime extends StackPane {
 		}
 
 		xAxis.setCategories(FXCollections.<String>observableArrayList(moves.keySet()));
-		barChart.getData().addAll(series1, series2, series3, series4, series5, series6);
+		barChart.getData().addAll(series0, series1, series2, series3, series4, series5, series6);
 	}
 
 	public void delete() {
 		xAxis.getCategories().clear();
+		series0.getData().clear();
 		series1.getData().clear();
 		series2.getData().clear();
 		series3.getData().clear();

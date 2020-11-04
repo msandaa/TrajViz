@@ -2,20 +2,23 @@
     -fx-text-fill: blue;
 }
 .default-color0.chart-bar {
+    -fx-bar-fill: transparent; 
+    }
+.default-color1.chart-bar {
     -fx-bar-fill: red; 
     }
-.default-color1.chart-bar { 
+.default-color2.chart-bar { 
     -fx-bar-fill: #FF8000; 
     }
-.default-color2.chart-bar {
+.default-color3.chart-bar {
     -fx-bar-fill: yellow; 
     }
-.default-color3.chart-bar { 
+.default-color4.chart-bar { 
     -fx-bar-fill: #80FF00; 
     }
-.default-color4.chart-bar {
+.default-color5.chart-bar {
     -fx-bar-fill: lime; 
     }
-.default-color5.chart-bar {
+.default-color6.chart-bar {
     -fx-bar-fill: lightgrey; 
     }

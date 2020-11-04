@@ -42,6 +42,7 @@ public class Controller extends AnchorPane {
 	private double previousY;
 
 	private ChartTime chart = new ChartTime();
+	private ChartTime2 chart2 = new ChartTime2();
 
 	@FXML
 	public AnchorPane anchorpane;
@@ -65,7 +66,9 @@ public class Controller extends AnchorPane {
 		AnchorPane.setLeftAnchor(toolbar, 20.0);
 		AnchorPane.setRightAnchor(chart, 20.0);
 		AnchorPane.setBottomAnchor(chart, 20.0);
-		this.getChildren().addAll(toolbar, chart);
+		AnchorPane.setRightAnchor(chart2, 20.0);
+		AnchorPane.setBottomAnchor(chart2, 180.0);
+		this.getChildren().addAll(toolbar, chart2, chart);
 	}
 
 	public void setTrajectories(Trajectories t) {
@@ -101,6 +104,7 @@ public class Controller extends AnchorPane {
 
 	public void deleteChart() {
 		chart.delete();
+		chart2.delete();
 	}
 
 	private void deleteSelectedPositions() {
@@ -124,7 +128,9 @@ public class Controller extends AnchorPane {
 			} else if (node instanceof PathShape) {
 				PathShape pathShape = (PathShape) node;
 				Path path = roadmap.getPath(pathShape.id);
-				chart.draw(movesBetweenStations(path.startStation.id, path.endStation.id));
+				List<Move> moves = movesBetweenStations(path.startStation.id, path.endStation.id);
+				chart.draw(moves);
+				chart2.draw(moves);
 			}
 		} else if (event.getButton() == MouseButton.SECONDARY) {
 		}
