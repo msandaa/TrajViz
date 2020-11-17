@@ -41,6 +41,7 @@ public class Controller extends AnchorPane {
 	private double previousX;
 	private double previousY;
 
+	private ToolbarController toolbar;
 	private ChartTime chart = new ChartTime();
 	private ChartTime2 chart2 = new ChartTime2();
 
@@ -61,13 +62,13 @@ public class Controller extends AnchorPane {
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
-		ToolbarController toolbar = new ToolbarController(this);
+		toolbar = new ToolbarController(this);
 		AnchorPane.setTopAnchor(toolbar, 20.0);
 		AnchorPane.setLeftAnchor(toolbar, 20.0);
 		AnchorPane.setRightAnchor(chart, 20.0);
 		AnchorPane.setBottomAnchor(chart, 20.0);
 		AnchorPane.setRightAnchor(chart2, 20.0);
-		AnchorPane.setBottomAnchor(chart2, 180.0);
+		AnchorPane.setBottomAnchor(chart2, 220.0);
 		this.getChildren().addAll(toolbar, chart2, chart);
 	}
 
@@ -130,7 +131,7 @@ public class Controller extends AnchorPane {
 				Path path = roadmap.getPath(pathShape.id);
 				List<Move> moves = movesBetweenStations(path.startStation.id, path.endStation.id);
 				chart.draw(moves);
-				chart2.draw(moves);
+				chart2.draw(moves, toolbar.getMovesIn(), toolbar.getMovesOut());
 			}
 		} else if (event.getButton() == MouseButton.SECONDARY) {
 		}

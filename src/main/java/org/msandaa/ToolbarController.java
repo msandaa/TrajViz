@@ -54,6 +54,14 @@ public class ToolbarController extends VBox {
 		controller.tryDrawWall((int) sliderMovesIn.getValue(), (int) sliderMovesOut.getValue());
 	}
 
+	public int getMovesIn() {
+		return (int) sliderMovesIn.getValue();
+	}
+
+	public int getMovesOut() {
+		return (int) sliderMovesOut.getValue();
+	}
+
 	private void addChangeListener() {
 		sliderMovesIn.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override

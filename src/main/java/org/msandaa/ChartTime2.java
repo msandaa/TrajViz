@@ -5,19 +5,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.msandaa.model.Move;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
@@ -32,13 +33,7 @@ public class ChartTime2 extends AnchorPane {
 	@FXML
 	private StackedBarChart<Number, String> barChart;
 
-	private final XYChart.Series<Number, String> series0 = new XYChart.Series<Number, String>();
-	private final XYChart.Series<Number, String> series1 = new XYChart.Series<Number, String>();
-	private final XYChart.Series<Number, String> series2 = new XYChart.Series<Number, String>();
-	private final XYChart.Series<Number, String> series3 = new XYChart.Series<Number, String>();
-	private final XYChart.Series<Number, String> series4 = new XYChart.Series<Number, String>();
-	private final XYChart.Series<Number, String> series5 = new XYChart.Series<Number, String>();
-	private final XYChart.Series<Number, String> series6 = new XYChart.Series<Number, String>();
+	List<XYChart.Series<Number, String>> series = new ArrayList<XYChart.Series<Number, String>>();
 
 	public ChartTime2() {
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("chart2.fxml"));
@@ -53,74 +48,101 @@ public class ChartTime2 extends AnchorPane {
 		barChart.setLegendVisible(false);
 		barChart.setCategoryGap(1);
 		yAxis.setTickLabelsVisible(false);
+		for (int i = 0; i < 10; i++) {
+			XYChart.Series<Number, String> s = new XYChart.Series<Number, String>();
+			series.add(s);
+		}
 	}
 
-	public void draw(List<Move> movesBetweenStations) {
+	public void draw(List<Move> movesBetweenStations, int movesIn, int movesOut) {
 		delete();
-		Date startTimeFirstMove = movesBetweenStations.get(0).startTime;
-		int timeOffSet = timeOffset(startTimeFirstMove);
-		long startTime = startTimeFirstMove.getTime();
-		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-		String hrmin = format.format(startTime);
-		startTimeLabel.setText("start time: " + hrmin);
+		String category;
 		List<String> categories = new ArrayList<String>();
-		long moveStartTime;
-		long moveEndTime;
-		long timediffSer1;
-		for (Move move : movesBetweenStations) {
-			categories.add(move.trajectory.id);
-			String category = move.trajectory.id;
-			moveStartTime = move.startTime.getTime();
-			moveEndTime = move.startTime.getTime();
-			timediffSer1 = moveStartTime - startTime;
-			series0.getData().add(new XYChart.Data<Number, String>(timediffSer1 / 1000 + timeOffSet, category));
-			double speed = move.speedInMpS;
-			if (0 < speed && speed < 0.5) {
-				add(series1, move, category);
-			} else if (speed < 1) {
-				add(series2, move, category);
-			} else if (speed < 1.5) {
-				add(series3, move, category);
-			} else if (speed < 2.0) {
-				add(series4, move, category);
-			} else if (speed < 2.5) {
-				add(series5, move, category);
-			} else {
-				add(series6, move, category);
-			}
+		List<List<Move>> listMovesInToOut = listMovesInToOut(movesBetweenStations, movesIn, movesOut);
+		setStartTime(listMovesInToOut);
+		int timeOffSet = timeOffset(listMovesInToOut);
+		long firstMoveStartTime = listMovesInToOut.get(0).get(0).startTime.getTime();
+		for (List<Move> movesInToOut : listMovesInToOut) {
+			category = movesInToOut.get(0).trajectory.id;
+			categories.add(category);
+			setTransparentSerie((movesInToOut.get(0).startTime.getTime() - firstMoveStartTime) / 1000 + timeOffSet,
+					category);
+			setSeries(movesInToOut, category);
 		}
 		Collections.reverse(categories);
 		yAxis.setCategories(FXCollections.<String>observableArrayList(categories));
-		System.out.println(series0.getData());
-		System.out.println(series1.getData());
-		System.out.println(series2.getData());
-		System.out.println(series3.getData());
-		System.out.println(series4.getData());
-		System.out.println(series5.getData());
-		System.out.println(series6.getData());
-		barChart.getData().addAll(series0, series1, series2, series3, series4, series5, series6);
-
+		barChart.getData().addAll(series);
 	}
 
-	private void add(Series<Number, String> series, Move move, String category) {
-		series.getData().add(new XYChart.Data<Number, String>(move.timedifferenzInMilliSecs / 1000, category));
+	private void setSeries(List<Move> movesInToOut, String category) {
+		for (int i = 0; i < movesInToOut.size(); i++) {
+			Move move = movesInToOut.get(i);
+			XYChart.Data<Number, String> data = new XYChart.Data<Number, String>(move.timedifferenzInMilliSecs / 1000,
+					category);
+			series.get(i + 1).getData().add(data);
+			data.nodeProperty().addListener(new ChangeListener<Node>() {
+				@Override
+				public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
+					if (node != null) {
+						node.setStyle(getcolor(move.speedInMpS));
+					}
+				}
+			});
+		}
+	}
+
+	private void setTransparentSerie(long time, String category) {
+		series.get(0).getData().add(new XYChart.Data<Number, String>(time, category));
+	}
+
+	private List<List<Move>> listMovesInToOut(List<Move> movesBetweenStations, int movesIn, int movesOut) {
+		ArrayList<List<Move>> listMovesInToOut = new ArrayList<List<Move>>();
+		for (Move move : movesBetweenStations) {
+			List<Move> movesInToOut = new ArrayList<Move>();
+			for (int i = -movesIn; i <= movesOut; i++) {
+				try {
+					movesInToOut.add(move.trajectory.moves.get(move.trajectory.moves.indexOf(move) + i));
+				} catch (IndexOutOfBoundsException e) {
+				}
+			}
+			listMovesInToOut.add(movesInToOut);
+		}
+		return listMovesInToOut;
+	}
+
+	private void setStartTime(List<List<Move>> listMovesBetweenStations) {
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+		String hrmin = format.format(listMovesBetweenStations.get(0).get(0).startTime.getTime());
+		startTimeLabel.setText("start time: " + hrmin);
+	}
+
+	private String getcolor(double speed) {
+		if (0 < speed && speed < 0.5) {
+			return "-fx-bar-fill: red;";
+		} else if (speed < 1) {
+			return "-fx-bar-fill: #FF8000;";
+		} else if (speed < 1.5) {
+			return "-fx-bar-fill: yellow;";
+		} else if (speed < 2.0) {
+			return "-fx-bar-fill: #80FF00;";
+		} else if (speed < 2.5) {
+			return "-fx-bar-fill: lime;";
+		} else {
+			return "-fx-bar-fill: lightgrey;";
+		}
 	}
 
 	public void delete() {
 		yAxis.getCategories().clear();
-		series0.getData().clear();
-		series1.getData().clear();
-		series2.getData().clear();
-		series3.getData().clear();
-		series4.getData().clear();
-		series5.getData().clear();
-		series6.getData().clear();
+		for (XYChart.Series<Number, String> s : series) {
+			s.getData().clear();
+		}
 		barChart.getData().clear();
 	}
 
-	public int timeOffset(Date date) {
+	public int timeOffset(List<List<Move>> listMovesInToOut) {
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
+		cal.setTime(listMovesInToOut.get(0).get(0).startTime);
 		int second = cal.get(Calendar.SECOND);
 		return second;
 	}
