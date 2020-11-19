@@ -108,16 +108,16 @@ public class View extends Group {
 	}
 
 	public static Color speedToColor(double speed) {
-		if (speed < 0.5) {
-			return Color.RED;
-		} else if (speed < 1) {
-			return Color.web("#FF8000");
-		} else if (speed < 1.5) {
-			return Color.YELLOW;
-		} else if (speed < 2.0) {
-			return Color.web("#80FF00");
-		} else if (speed < 2.5) {
-			return Color.LIME;
+		if (speed <= 0.5) {
+			return Color.web("#d73027");
+		} else if (speed <= 1) {
+			return Color.web("#fc8d59");
+		} else if (speed <= 1.5) {
+			return Color.web("#fee08b");
+		} else if (speed <= 2.0) {
+			return Color.web("#d9ef8b");
+		} else if (speed <= 2.5) {
+			return Color.web("#91cf60");
 		}
 		return Color.LIGHTGRAY;
 	}

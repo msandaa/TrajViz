@@ -13,7 +13,6 @@ import org.msandaa.model.Roadmap;
 import org.msandaa.model.Trajectories;
 import org.msandaa.model.Trajectory;
 import org.msandaa.viewElements.PathShape;
-import org.msandaa.viewElements.StationShape;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +24,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 
 public class Controller extends AnchorPane {
 
@@ -36,14 +34,14 @@ public class Controller extends AnchorPane {
 	// View of Model
 	private View view;
 
-	private List<StationShape> selectedPositions = new ArrayList<>();
+	private PathShape selectedPath;
 
 	private double previousX;
 	private double previousY;
 
 	private ToolbarController toolbar;
-	private ChartTime chart = new ChartTime();
-	private ChartTime2 chart2 = new ChartTime2();
+	private ChartDistribution chartDistribution = new ChartDistribution();
+	private ChartTime chartTime = new ChartTime();
 
 	@FXML
 	public AnchorPane anchorpane;
@@ -65,28 +63,34 @@ public class Controller extends AnchorPane {
 		toolbar = new ToolbarController(this);
 		AnchorPane.setTopAnchor(toolbar, 20.0);
 		AnchorPane.setLeftAnchor(toolbar, 20.0);
-		AnchorPane.setRightAnchor(chart, 20.0);
-		AnchorPane.setBottomAnchor(chart, 20.0);
-		AnchorPane.setRightAnchor(chart2, 20.0);
-		AnchorPane.setBottomAnchor(chart2, 220.0);
-		this.getChildren().addAll(toolbar, chart2, chart);
+		AnchorPane.setRightAnchor(chartDistribution, 20.0);
+		AnchorPane.setBottomAnchor(chartDistribution, 200.0);
+		AnchorPane.setRightAnchor(chartTime, 20.0);
+		AnchorPane.setBottomAnchor(chartTime, 20.0);
+		this.getChildren().addAll(toolbar, chartTime, chartDistribution);
 	}
 
 	public void setTrajectories(Trajectories t) {
-		trajectories = t;
+		if (t != null) {
+			trajectories = t;
+			toolbar.headmapCheckboxSetEnable(true);
+		}
 	}
 
 	public void tryDrawWall(int MovesIn, int MovesOut) {
 		view.deleteWall();
-		if (selectedPositions.size() == 2) {
-			for (Move move : movesBetweenSelectedPositions()) {
+		if (selectedPath != null) {
+			for (Move move : movesAboutSelectedPath()) {
 				view.drawTrajectory(move, MovesIn, MovesOut);
 			}
 		}
 	}
 
-	public void updateMovesInOut(int MoveIn, int MoveOut) {
-		tryDrawWall(MoveIn, MoveOut);
+	public void updateMovesInOut(int movesIn, int movesOut) {
+		if (toolbar.wallCheckBoxIsSelected()) {
+			tryDrawWall(movesIn, movesOut);
+		}
+		chartTime.draw(movesAboutSelectedPath(), movesIn, movesOut);
 	}
 
 	public void switchOnAverageSpeed(boolean on) {
@@ -98,21 +102,31 @@ public class Controller extends AnchorPane {
 		}
 	}
 
+	public void deleteWall() {
+		view.deleteWall();
+	}
+
 	public void deleteAll() {
 		view.deleteWall();
-		deleteSelectedPositions();
+		chartDistribution.delete();
+		chartTime.delete();
+		if (selectedPath != null) {
+			deleteSelectedPath();
+		}
+		toolbar.wallCheckboxSetEnable(false);
 	}
 
 	public void deleteChart() {
-		chart.delete();
-		chart2.delete();
+		chartDistribution.delete();
+		chartTime.delete();
+		if (selectedPath != null) {
+			deleteSelectedPath();
+		}
 	}
 
-	private void deleteSelectedPositions() {
-		for (StationShape posShape : selectedPositions) {
-			posShape.setFill(Color.BLACK);
-		}
-		selectedPositions.clear();
+	private void deleteSelectedPath() {
+		selectedPath.setUnselected();
+		selectedPath = null;
 	}
 
 	@FXML
@@ -120,18 +134,19 @@ public class Controller extends AnchorPane {
 		if (event.getButton() == MouseButton.PRIMARY) {
 			PickResult pickResult = event.getPickResult();
 			Node node = pickResult.getIntersectedNode();
-			if (node instanceof StationShape) {
-				StationShape posShape = (StationShape) node;
-				if (selectedPositions.size() < 2) {
-					selectedPositions.add(posShape);
-					posShape.setFill(Color.RED);
-				}
-			} else if (node instanceof PathShape) {
+
+			if (node instanceof PathShape) {
 				PathShape pathShape = (PathShape) node;
-				Path path = roadmap.getPath(pathShape.id);
-				List<Move> moves = movesBetweenStations(path.startStation.id, path.endStation.id);
-				chart.draw(moves);
-				chart2.draw(moves, toolbar.getMovesIn(), toolbar.getMovesOut());
+				if (selectedPath != null) {
+					selectedPath.setUnselected();
+				}
+				deleteAll();
+				selectedPath = pathShape;
+				selectedPath.setSelected();
+				toolbar.wallCheckboxSetEnable(true);
+				List<Move> moves = movesAboutSelectedPath();
+				chartDistribution.draw(moves);
+				chartTime.draw(moves, toolbar.getMovesIn(), toolbar.getMovesOut());
 			}
 		} else if (event.getButton() == MouseButton.SECONDARY) {
 		}
@@ -207,22 +222,9 @@ public class Controller extends AnchorPane {
 		return average;
 	}
 
-	private List<Move> movesBetweenSelectedPositions() {
-		List<Move> moves = new ArrayList<>();
-		for (Trajectory trajectory : trajectories.map.values()) {
-			for (int j = 0; j < trajectory.moves.size(); j++) {
-				Move move = trajectory.moves.get(j);
-				String selX1 = selectedPositions.get(0).id;
-				String selX2 = selectedPositions.get(1).id;
-				String moveX1 = move.path.startStation.id;
-				String moveX2 = move.path.endStation.id;
-				if (moveX1.equals(selX1) && moveX2.equals(selX2) || moveX1.equals(selX2) && moveX2.equals(selX1)) {
-					moves.add(move);
-				}
-			}
-		}
-		Collections.sort(moves);
-		return moves;
+	private List<Move> movesAboutSelectedPath() {
+		Path path = roadmap.getPath(selectedPath.id);
+		return movesBetweenStations(path.startStation.id, path.endStation.id);
 	}
 
 	private List<Move> movesBetweenStations(String startStation, String endStation) {

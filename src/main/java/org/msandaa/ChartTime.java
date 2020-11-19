@@ -3,40 +3,40 @@ package org.msandaa;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.msandaa.model.Move;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 
-public class ChartTime extends StackPane {
+public class ChartTime extends AnchorPane {
 
 	@FXML
-	CategoryAxis xAxis;
+	private Label startTimeLabel;
 	@FXML
-	NumberAxis yAxis;
+	private CategoryAxis yAxis;
 	@FXML
-	StackedBarChart<String, Number> barChart;
+	private NumberAxis xAxis;
+	@FXML
+	private StackedBarChart<Number, String> barChart;
 
-	private final XYChart.Series<String, Number> series0 = new XYChart.Series<String, Number>();
-	private final XYChart.Series<String, Number> series1 = new XYChart.Series<String, Number>();
-	private final XYChart.Series<String, Number> series2 = new XYChart.Series<String, Number>();
-	private final XYChart.Series<String, Number> series3 = new XYChart.Series<String, Number>();
-	private final XYChart.Series<String, Number> series4 = new XYChart.Series<String, Number>();
-	private final XYChart.Series<String, Number> series5 = new XYChart.Series<String, Number>();
-	private final XYChart.Series<String, Number> series6 = new XYChart.Series<String, Number>();
+	List<XYChart.Series<Number, String>> series = new ArrayList<XYChart.Series<Number, String>>();
 
 	public ChartTime() {
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("chart1.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("chart2.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		try {
@@ -46,70 +46,105 @@ public class ChartTime extends StackPane {
 		}
 		barChart.setAnimated(false);
 		barChart.setLegendVisible(false);
+		barChart.setCategoryGap(1);
+		yAxis.setTickLabelsVisible(false);
+		for (int i = 0; i < 10; i++) {
+			XYChart.Series<Number, String> s = new XYChart.Series<Number, String>();
+			series.add(s);
+		}
 	}
 
-	public void draw(List<Move> movesBetweenStations) {
+	public void draw(List<Move> movesBetweenStations, int movesIn, int movesOut) {
 		delete();
-		System.out.println(movesBetweenStations.size());
-		Map<String, List<Move>> moves = new HashMap<>();
-		for (Move move : movesBetweenStations) {
-			SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-			String hrmin = format.format(move.startTime);
-			if (!moves.containsKey(hrmin)) {
-				moves.put(hrmin, new ArrayList<Move>());
-			}
-			moves.get(hrmin).add(move);
-		}
-		double s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 0, s6 = 0;
 		String category;
-		for (Map.Entry<String, List<Move>> entry : moves.entrySet()) {
-			List<Move> movesList = entry.getValue();
-			s1 = 0;
-			s2 = 0;
-			s3 = 0;
-			s4 = 0;
-			s5 = 0;
-			s6 = 0;
-			for (Move move : movesList) {
-				double speed = move.speedInMpS;
-				if (speed < 0.5) {
-					s1++;
-				} else if (speed < 1) {
-					s2++;
-				} else if (speed < 1.5) {
-					s3++;
-				} else if (speed < 2.0) {
-					s4++;
-				} else if (speed < 2.5) {
-					s5++;
-				} else {
-					s6++;
+		List<String> categories = new ArrayList<String>();
+		List<List<Move>> listMovesInToOut = listMovesInToOut(movesBetweenStations, movesIn, movesOut);
+		setStartTime(listMovesInToOut);
+		int timeOffSet = timeOffset(listMovesInToOut);
+		long firstMoveStartTime = listMovesInToOut.get(0).get(0).startTime.getTime();
+		for (List<Move> movesInToOut : listMovesInToOut) {
+			category = movesInToOut.get(0).trajectory.id;
+			categories.add(category);
+			setTransparentSerie((movesInToOut.get(0).startTime.getTime() - firstMoveStartTime) / 1000 + timeOffSet,
+					category);
+			setSeries(movesInToOut, category);
+		}
+		Collections.reverse(categories);
+		yAxis.setCategories(FXCollections.<String>observableArrayList(categories));
+		barChart.getData().addAll(series);
+	}
+
+	private void setSeries(List<Move> movesInToOut, String category) {
+		for (int i = 0; i < movesInToOut.size(); i++) {
+			Move move = movesInToOut.get(i);
+			XYChart.Data<Number, String> data = new XYChart.Data<Number, String>(move.timedifferenzInMilliSecs / 1000,
+					category);
+			series.get(i + 1).getData().add(data);
+			data.nodeProperty().addListener(new ChangeListener<Node>() {
+				@Override
+				public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
+					if (node != null) {
+						node.setStyle(getcolor(move.speedInMpS));
+					}
+				}
+			});
+		}
+	}
+
+	private void setTransparentSerie(long time, String category) {
+		series.get(0).getData().add(new XYChart.Data<Number, String>(time, category));
+	}
+
+	private List<List<Move>> listMovesInToOut(List<Move> movesBetweenStations, int movesIn, int movesOut) {
+		ArrayList<List<Move>> listMovesInToOut = new ArrayList<List<Move>>();
+		for (Move move : movesBetweenStations) {
+			List<Move> movesInToOut = new ArrayList<Move>();
+			for (int i = -movesIn; i <= movesOut; i++) {
+				try {
+					movesInToOut.add(move.trajectory.moves.get(move.trajectory.moves.indexOf(move) + i));
+				} catch (IndexOutOfBoundsException e) {
 				}
 			}
-			category = entry.getKey();
-			series0.getData().add(new XYChart.Data<String, Number>(category, 0));
-			series1.getData().add(new XYChart.Data<String, Number>(category, s1));
-			series2.getData().add(new XYChart.Data<String, Number>(category, s2));
-			series3.getData().add(new XYChart.Data<String, Number>(category, s3));
-			series4.getData().add(new XYChart.Data<String, Number>(category, s4));
-			series5.getData().add(new XYChart.Data<String, Number>(category, s5));
-			series6.getData().add(new XYChart.Data<String, Number>(category, s6));
+			listMovesInToOut.add(movesInToOut);
 		}
+		return listMovesInToOut;
+	}
 
-		xAxis.setCategories(FXCollections.<String>observableArrayList(moves.keySet()));
-		barChart.getData().addAll(series0, series1, series2, series3, series4, series5, series6);
+	private void setStartTime(List<List<Move>> listMovesBetweenStations) {
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+		String hrmin = format.format(listMovesBetweenStations.get(0).get(0).startTime.getTime());
+		startTimeLabel.setText("start time: " + hrmin);
+	}
+
+	private String getcolor(double speed) {
+		if (0 < speed && speed <= 0.5) {
+			return "-fx-bar-fill: #d73027;";
+		} else if (speed <= 1) {
+			return "-fx-bar-fill: #fc8d59;";
+		} else if (speed <= 1.5) {
+			return "-fx-bar-fill: #fee08b;";
+		} else if (speed <= 2.0) {
+			return "-fx-bar-fill: #d9ef8b;";
+		} else if (speed <= 2.5) {
+			return "-fx-bar-fill: #91cf60;";
+		} else {
+			return "-fx-bar-fill: lightgrey;";
+		}
 	}
 
 	public void delete() {
-		xAxis.getCategories().clear();
-		series0.getData().clear();
-		series1.getData().clear();
-		series2.getData().clear();
-		series3.getData().clear();
-		series4.getData().clear();
-		series5.getData().clear();
-		series6.getData().clear();
+		yAxis.getCategories().clear();
+		for (XYChart.Series<Number, String> s : series) {
+			s.getData().clear();
+		}
 		barChart.getData().clear();
+	}
+
+	public int timeOffset(List<List<Move>> listMovesInToOut) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(listMovesInToOut.get(0).get(0).startTime);
+		int second = cal.get(Calendar.SECOND);
+		return second;
 	}
 
 }

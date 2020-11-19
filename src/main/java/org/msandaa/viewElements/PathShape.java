@@ -76,11 +76,19 @@ public class PathShape extends Path {
 		getElements().add(new LineTo(x1, y1));
 		getElements().add(new MoveTo(endX, endY));
 		getElements().add(new LineTo(x2, y2));
-
 	}
 
 	public void setColor(Color color) {
 		setStroke(color);
+	}
+
+	public void setSelected() {
+		setStrokeWidth(6);
+
+	}
+
+	public void setUnselected() {
+		setStrokeWidth(3);
 	}
 
 }

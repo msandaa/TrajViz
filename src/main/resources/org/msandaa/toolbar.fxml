@@ -14,7 +14,7 @@
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d73027" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 0.5 m/s">
                <HBox.margin>
                   <Insets left="5.0" />
@@ -24,7 +24,7 @@
       </HBox>
       <HBox layoutX="10.0" layoutY="283.0" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff8000" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#fc8d59" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 1 m/s">
                <HBox.margin>
                   <Insets left="5.0" />
@@ -34,7 +34,7 @@
       </HBox>
       <HBox layoutX="10.0" layoutY="297.0" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#fee08b" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 1,5 m/s">
                <HBox.margin>
                   <Insets left="5.0" />
@@ -44,7 +44,7 @@
       </HBox>
       <HBox layoutX="10.0" layoutY="301.0" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#80ff00" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d9ef8b" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 2 m/s">
                <HBox.margin>
                   <Insets left="5.0" />
@@ -54,7 +54,7 @@
       </HBox>
       <HBox layoutX="10.0" layoutY="304.0" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="LIME" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#91cf60" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&lt; 2,5 m/s">
                <HBox.margin>
                   <Insets left="5.0" />
@@ -62,10 +62,15 @@
             </Text>
          </children>
       </HBox>
-      <CheckBox fx:id="speedCheckBox" focusTraversable="false" mnemonicParsing="false" onAction="#speedCheckBoxClicked" text="Heatmap">
+      <CheckBox fx:id="headmapCheckBox" focusTraversable="false" mnemonicParsing="false" onAction="#headmapCheckBox" text="Heatmap">
          <padding>
-            <Insets bottom="8.0" top="8.0" />
+            <Insets bottom="1.0" top="8.0" />
          </padding></CheckBox>
+      <CheckBox fx:id="wallCheckBox" focusTraversable="false" layoutX="10.0" layoutY="110.0" mnemonicParsing="false" onAction="#wallCheckBox" text="Wall">
+         <padding>
+            <Insets bottom="8.0" top="1.0" />
+         </padding>
+      </CheckBox>
       <VBox prefHeight="200.0" prefWidth="100.0">
          <children>
             <Label text="Moves In" />
@@ -86,8 +91,6 @@
             </Slider>
          </children>
       </VBox>
-      <Button focusTraversable="false" mnemonicParsing="false" onAction="#drawWall" prefHeight="25.0" prefWidth="100.0" text=" Draw Wall" />
-      <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteWall" prefHeight="25.0" prefWidth="100.0" text="Delete Wall" />
-      <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteChart" prefHeight="25.0" prefWidth="100.0" text="Delete Chart" />
+      <Button focusTraversable="false" mnemonicParsing="false" onAction="#delete" prefHeight="25.0" prefWidth="100.0" text="Delete" />
    </children>
 </fx:root>

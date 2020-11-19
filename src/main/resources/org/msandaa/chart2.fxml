@@ -8,7 +8,6 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" type="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="startTimeLabel" layoutX="139.0" layoutY="16.0" prefHeight="17.0" prefWidth="129.0" text="start time:" />
@@ -23,7 +22,7 @@
       <Line endX="250.0" endY="50.0" layoutX="-173.0" layoutY="-25.0" startX="200.0" startY="50.0" />
       <Line endX="250.0" endY="50.0" layoutX="-173.0" layoutY="-25.0" startX="245.0" startY="45.0" />
       <Line endX="250.0" endY="50.0" layoutX="-173.0" layoutY="-25.0" startX="245.0" startY="55.0" />
-      <Label layoutX="28.0" layoutY="15.0" text="in sec">
+      <Label layoutX="28.0" layoutY="15.0" text="time in sec">
          <font>
             <Font size="7.0" />
          </font>

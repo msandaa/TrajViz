@@ -59,9 +59,4 @@ public class MenuController extends MenuBar {
 		controller.setTrajectories(Deserializer.fileToTrajectories(controller.roadmap, file));
 	}
 
-	@FXML
-	void drawSelected(ActionEvent event) {
-		// controller.tryDrawTrajectory();
-	}
-
 }

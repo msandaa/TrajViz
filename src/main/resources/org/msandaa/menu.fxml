@@ -12,10 +12,5 @@
             <MenuItem mnemonicParsing="false" onAction="#readTrajectories" text="Read Trajectorys" />
       </items>
     </Menu>
-      <Menu mnemonicParsing="false" text="Edit">
-        <items>
-            <MenuItem mnemonicParsing="false" onAction="#drawSelected" text="Draw selected Trajectories" />
-        </items>
-      </Menu>
   </menus>
 </fx:root>

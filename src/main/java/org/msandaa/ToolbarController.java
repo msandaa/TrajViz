@@ -15,7 +15,9 @@ public class ToolbarController extends VBox {
 
 	private Controller controller;
 	@FXML
-	private CheckBox speedCheckBox;
+	private CheckBox headmapCheckBox;
+	@FXML
+	private CheckBox wallCheckBox;
 	@FXML
 	private Slider sliderMovesIn;
 	@FXML
@@ -32,15 +34,25 @@ public class ToolbarController extends VBox {
 			throw new RuntimeException(exception);
 		}
 		addChangeListener();
+		headmapCheckBox.setDisable(true);
+		wallCheckBox.setDisable(true);
 	}
 
 	@FXML
-	public void speedCheckBoxClicked(ActionEvent event) {
-		controller.switchOnAverageSpeed(speedCheckBox.isSelected());
+	public void headmapCheckBox(ActionEvent event) {
+		controller.switchOnAverageSpeed(headmapCheckBox.isSelected());
 	}
 
 	@FXML
-	public void deleteWall(ActionEvent event) {
+	public void wallCheckBox(ActionEvent event) {
+		if (wallCheckBox.isSelected())
+			controller.tryDrawWall((int) sliderMovesIn.getValue(), (int) sliderMovesOut.getValue());
+		else
+			controller.deleteWall();
+	}
+
+	@FXML
+	public void delete(ActionEvent event) {
 		controller.deleteAll();
 	}
 
@@ -52,6 +64,19 @@ public class ToolbarController extends VBox {
 	@FXML
 	public void drawWall(ActionEvent event) {
 		controller.tryDrawWall((int) sliderMovesIn.getValue(), (int) sliderMovesOut.getValue());
+	}
+
+	public void headmapCheckboxSetEnable(boolean b) {
+		headmapCheckBox.setDisable(!b);
+	}
+
+	public void wallCheckboxSetEnable(boolean b) {
+		wallCheckBox.setSelected(false);
+		wallCheckBox.setDisable(!b);
+	}
+
+	public boolean wallCheckBoxIsSelected() {
+		return wallCheckBox.isSelected();
 	}
 
 	public int getMovesIn() {

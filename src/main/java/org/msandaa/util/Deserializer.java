@@ -107,14 +107,12 @@ public class Deserializer {
 		try {
 			MAPPER.enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
 			MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
 			JsonNode jsonNode = MAPPER.readTree(json);
-			JsonNode posNode = jsonNode.get("positions");
+			JsonNode posNode = jsonNode.get("stations");
 			JsonNode pathNode = jsonNode.get("paths");
 			Set<String> keyNotFound = new HashSet<>();
-
 			if (posNode == null) {
-				keyNotFound.add("positions");
+				keyNotFound.add("stations");
 			}
 			if (pathNode == null) {
 				keyNotFound.add("paths");
@@ -124,7 +122,6 @@ public class Deserializer {
 			}
 			Map<String, Station> positions = mappingPositions(posNode.toString());
 			Map<String, Path> paths = mappingPaths(positions, pathNode.toString());
-
 			MAPPER.disable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
 			MAPPER.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			return new Roadmap(positions, paths);
@@ -182,7 +179,8 @@ public class Deserializer {
 	private static Trajectories deserializeTrajectories(Roadmap roadmap, String json)
 			throws JsonMappingException, JsonProcessingException, ParseException {
 		SimpleDateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		Iterator<Map.Entry<String, JsonNode>> it = MAPPER.readTree(json).fields();
+		JsonNode trajetoriesNode = MAPPER.readTree(json).get("trajectories");
+		Iterator<Map.Entry<String, JsonNode>> it = MAPPER.readTree(trajetoriesNode.toString()).fields();
 		Map<String, Trajectory> trajectories = new HashMap<>();
 		while (it.hasNext()) {
 			Map.Entry<String, JsonNode> entry = it.next();
@@ -197,7 +195,8 @@ public class Deserializer {
 			}
 			trajectories.put(entry.getKey(), new Trajectory(entry.getKey(), roadmap, trajectory));
 		}
-		return new Trajectories(trajectories);
+		Trajectories t = new Trajectories(trajectories);
+		return t;
 	}
 
 	public static String fileToString(File file) throws FileInputException {

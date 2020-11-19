@@ -5,19 +5,19 @@
     -fx-bar-fill: transparent; 
     }
 .default-color1.chart-bar {
-    -fx-bar-fill: red; 
+    -fx-bar-fill: #d73027; 
     }
 .default-color2.chart-bar { 
-    -fx-bar-fill: #FF8000; 
+    -fx-bar-fill: #fc8d59; 
     }
 .default-color3.chart-bar {
-    -fx-bar-fill: yellow; 
+    -fx-bar-fill: #fee08b; 
     }
 .default-color4.chart-bar { 
-    -fx-bar-fill: #80FF00; 
+    -fx-bar-fill: #d9ef8b; 
     }
 .default-color5.chart-bar {
-    -fx-bar-fill: lime; 
+    -fx-bar-fill: #91cf60; 
     }
 .default-color6.chart-bar {
     -fx-bar-fill: lightgrey; 
